@@ -1,11 +1,17 @@
+#define ARDUINO 243 // TODO
+#include <Arduino.h>
 #include <StaticThreadController.h>
 #include <Thread.h>
 #include <ThreadController.h>
-#include "credentials.h"
+
+#include "src/credentials.h"
+#include "src/GeneralLogger/GeneralLogger.cpp"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 ThreadController controller(10);
+
+
 
 void gnd_humidity_sensor_read_handler(void){
 
