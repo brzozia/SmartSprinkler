@@ -1,6 +1,7 @@
 #include <StaticThreadController.h>
 #include <Thread.h>
 #include <ThreadController.h>
+#include "credentials.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
