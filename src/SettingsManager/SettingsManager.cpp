@@ -1,5 +1,6 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
+#include <string.h>
 #define SETTINGS_JSON_BUFFER_SIZE 128
 #define SETTINGS_OBSERVER_ARR_SIZE 10
 
@@ -52,7 +53,7 @@ public:
     }
 
         
-    strlcpy(config.ssid, doc["ssid"] | "errr", 64);
+    strncpy(config.ssid, doc["ssid"] | "errr", 64);
     notify_all();
 
   }

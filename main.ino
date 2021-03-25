@@ -6,23 +6,33 @@
 
 #include "src/credentials.h"
 #include "src/GeneralLogger/GeneralLogger.cpp"
+#include "src/SettingsManager/SettingsManager.cpp"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 ThreadController controller(10);
 
-
+GeneralLogger logger;
+SettingsManager settings;
 
 void gnd_humidity_sensor_read_handler(void){
 
+  
   //logger
+  logger.notice("GND HUMIDITY READ::");
 }
 void dht_sensor_read_handler(void){
 
   //logger
+  logger.notice("DHT SENSOR READ::");
 }
 
 void setup() {
+  //Serial and logger
+  Serial.begin(115200);
+  while(!Serial){};
+  logger.begin(LOG_LEVEL_VERBOSE, &Serial);
+
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
   GNDHumiditySensorTH.setInterval(1000);

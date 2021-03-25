@@ -1,6 +1,6 @@
 #include <ArduinoLog.h>
 
-class GeneralLogger: Logging{
+class GeneralLogger: public Logging{
 
 
 };
