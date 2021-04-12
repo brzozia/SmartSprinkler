@@ -1,5 +1,3 @@
-#define ARDUINO 243 // TODO
-#include <Arduino.h>
 #include <StaticThreadController.h>
 #include <Thread.h>
 #include <ThreadController.h>
