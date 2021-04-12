@@ -54,3 +54,8 @@ void loop() {
   digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);                       // wait for a second
 }
+//file with libraries
+// ArduinoThread
+// ArduinoJSON
+// AduinoLog
+// ESP_EEPROM
