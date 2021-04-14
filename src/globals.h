@@ -2,7 +2,9 @@
 #define __GLOBALS_H__
 
 
-#include "GeneralLogger/GeneralLogger.h"
-extern GeneralLogger logger;
+class GeneralLogger;
+class SettingsManager;
+extern SettingsManager *settings;
+extern GeneralLogger *logger;
 
 #endif // __GLOBALS_H__

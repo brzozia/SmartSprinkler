@@ -5,4 +5,5 @@ void GeneralLogger::error(T msg, Args... args)
 {
 
     Logging::error(msg, args...);
+
 }

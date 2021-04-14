@@ -1,6 +1,8 @@
 #ifndef __SETTINGSMANAGER_H__
 #define __SETTINGSMANAGER_H__
+
 #include "../globals.h"
+#include "../GeneralLogger/GeneralLogger.h"
 #include <ArduinoJson.h>
 #include <Arduino.h>
 #include <string.h>

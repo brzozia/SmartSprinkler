@@ -12,27 +12,28 @@ Thread DHTSensorReadTH;
 ThreadController controller(10);
 
 //globals
-GeneralLogger logger;
+GeneralLogger *logger;
 
-SettingsManager settings;
+SettingsManager *settings;
 
 void gnd_humidity_sensor_read_handler(void){
 
   
   //logger
-  logger.notice("GND HUMIDITY READ::");
+  logger->notice("GND HUMIDITY READ::");
 }
 void dht_sensor_read_handler(void){
 
   //logger
-  logger.notice("DHT SENSOR READ::");
+  logger->notice("DHT SENSOR READ::");
 }
 
 void setup() {
   //Serial and logger
   Serial.begin(115200);
   while(!Serial){};
-  logger.begin(LOG_LEVEL_VERBOSE, &Serial);
+  logger = new GeneralLogger();
+  logger->begin(LOG_LEVEL_VERBOSE, &Serial);
 
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
