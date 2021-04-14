@@ -1,6 +1,6 @@
 #ifndef __SETTINGSMANAGER_H__
 #define __SETTINGSMANAGER_H__
-#include "../globals.cpp"
+#include "../globals.h"
 #include <ArduinoJson.h>
 #include <Arduino.h>
 #include <string.h>

@@ -3,14 +3,17 @@
 #include <ThreadController.h>
 
 #include "src/credentials.h"
-#include "src/GeneralLogger/GeneralLogger.cpp"
-#include "src/SettingsManager/SettingsManager.cpp"
+#include "src/GeneralLogger/GeneralLogger.h"
+#include "src/SettingsManager/SettingsManager.h"
+#include "src/globals.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 ThreadController controller(10);
 
+//globals
 GeneralLogger logger;
+
 SettingsManager settings;
 
 void gnd_humidity_sensor_read_handler(void){
