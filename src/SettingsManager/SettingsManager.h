@@ -10,6 +10,7 @@
 
 #define SETTINGS_JSON_BUFFER_SIZE 128
 #define SETTINGS_OBSERVER_ARR_SIZE 10
+#define SETTINGS_WIFI_CRED_LENGTH 32
 class ISettingsObserver
 {
 public:
@@ -22,8 +23,8 @@ class SettingsManager
 
     struct Config
     {
-        char ssid[64];
-        char password[64];
+        char ssid[SETTINGS_WIFI_CRED_LENGTH];
+        char password[SETTINGS_WIFI_CRED_LENGTH];
         char darkMode = false;
     };
 

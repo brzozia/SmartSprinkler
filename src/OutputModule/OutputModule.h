@@ -25,9 +25,9 @@ class OutputModule{
         //check if compiler optimizes that
         const int PUMP_PIN = 0;
         const int SOIL_HUMIDITY_SENSOR = 4;
-        const int RGB_LED_R_PIN = 1;
+        const int RGB_LED_R_PIN = 11;
         const int RGB_LED_G_PIN = 2;
-        const int RGB_LED_B_PIN = 3;
+        const int RGB_LED_B_PIN = 14;
 };
 
 #endif // __OUTPUTMODULE_H__

@@ -2,6 +2,9 @@
 SettingsManager::SettingsManager() 
 {
   EEPROM.begin(sizeof(SettingsManager::Config));
+  config.ssid[0] = '\0';
+  config.password[0] = '\0';
+  config.darkMode = false;
 
 }
 
@@ -39,8 +42,8 @@ void SettingsManager::loadConfigFromJson(const char *msg)
   }
 
       
-  strncpy(config.ssid, doc["ssid"] | "errr", 64);
-  strncpy(config.password, doc["password"] | "errr", 64);
+  strncpy(config.ssid, doc["ssid"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
+  strncpy(config.password, doc["password"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
   config.darkMode = doc['darkMode'] | false;
 
   notify_all();
@@ -50,14 +53,12 @@ void SettingsManager::getConfigJson(char *txt, int size)
   if (size < SETTINGS_JSON_BUFFER_SIZE)
   {
     //LOG ERROR
-    logger->error(F("Failed to write config: buffer is too short"));
+    logger->error("Failed to write config: buffer is too short");
   }
-
-  doc.clear();
-  doc["ssid"].set(config.ssid);
-  doc["password"].set(config.password);
+  // StaticJsonDocument<SETTINGS_JSON_BUFFER_SIZE> doc;
+  doc["ssid"] = config.ssid;
+  doc["password"] = config.password;
   doc["darkMode"].set(config.darkMode);
-
   if (serializeJson(doc, txt, size) == 0)
   {
     //ERROR
