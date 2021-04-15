@@ -2,15 +2,17 @@
 
 OutputModule::OutputModule() 
 {
-    pinMode(PUMP_PIN, OUTPUT);
-    pinMode(SOIL_HUMIDITY_SENSOR, INPUT);
-    digitalWrite(PUMP_PIN, LOW);
-    pinMode(RGB_LED_R_PIN, OUTPUT);
-    pinMode(RGB_LED_G_PIN, OUTPUT);
-    pinMode(RGB_LED_B_PIN, OUTPUT);
-    digitalWrite(RGB_LED_R_PIN, OUTPUT);
-    digitalWrite(RGB_LED_G_PIN, OUTPUT);
-    digitalWrite(RGB_LED_B_PIN, OUTPUT);
+    pinMode(BUILTIN_LED , OUTPUT);
+    digitalWrite(BUILTIN_LED, LOW);
+    // pinMode(PUMP_PIN, OUTPUT);
+    // pinMode(SOIL_HUMIDITY_SENSOR, INPUT);
+    // digitalWrite(PUMP_PIN, LOW);
+    // pinMode(RGB_LED_R_PIN, OUTPUT);
+    // pinMode(RGB_LED_G_PIN, OUTPUT);
+    // pinMode(RGB_LED_B_PIN, OUTPUT);
+    // digitalWrite(RGB_LED_R_PIN, OUTPUT);
+    // digitalWrite(RGB_LED_G_PIN, OUTPUT);
+    // digitalWrite(RGB_LED_B_PIN, OUTPUT);
 }
 
 void OutputModule::ledOff() 
@@ -64,4 +66,32 @@ void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b)
 int OutputModule::read_humidity() 
 {
     return analogRead(SOIL_HUMIDITY_SENSOR);
+}
+
+void OutputModule::tick() 
+{
+    if(keepAliveBlinkState){
+        builtinLedToggle();
+    }
+}
+
+void OutputModule::builtinLedOn() 
+{
+    digitalWrite(BUILTIN_LED, HIGH);
+}
+
+void OutputModule::builtinLedOff() 
+{
+    digitalWrite(BUILTIN_LED, LOW);
+}
+
+void OutputModule::builtinLedToggle() 
+{
+    if(digitalRead(BUILTIN_LED)) builtinLedOff();
+    else builtinLedOn();
+}
+
+void OutputModule::keepAliveBlink(bool on) 
+{
+    keepAliveBlinkState = on;
 }

@@ -2,6 +2,8 @@
 #define __GLOBALS_H__
 
 
+class OutputModule;
+extern OutputModule *outMod;
 class GeneralLogger;
 class SettingsManager;
 extern SettingsManager *settings;

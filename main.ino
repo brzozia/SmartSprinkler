@@ -6,17 +6,18 @@
 #include "src/credentials.h"
 #include "src/GeneralLogger/GeneralLogger.h"
 #include "src/SettingsManager/SettingsManager.h"
-#include "src/CommandParser/CommandParser.h"
+#include "src/OutputModule/OutputModule.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
+Thread keepAliveThread;
 ThreadController controller(10);
 
-CommandParser cmdParser;
 
 //globals
 GeneralLogger *logger;
 SettingsManager *settings;
+OutputModule *outMod;
 
 void gnd_humidity_sensor_read_handler(void){
 
@@ -29,32 +30,41 @@ void dht_sensor_read_handler(void){
   //logger
   logger->trace("DHT SENSOR READ::\r\n");
 }
+void keep_alive_handler(void){
+  outMod->tick();
+}
 
 void setup() {
   //Serial and logger
   Serial.begin(115200);
   while(!Serial){};
   logger = new GeneralLogger();
-  settings = new SettingsManager();
   logger->begin(LOG_LEVEL_VERBOSE, &Serial);
+  logger->notice("logger started\r\n");
+  settings = new SettingsManager();
+  logger->notice("settings manager started\r\n");
+
+  outMod = new OutputModule();
+  logger->notice("output module strated\r\n");
+  
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
   GNDHumiditySensorTH.setInterval(1000);
   controller.add(&GNDHumiditySensorTH);
-
+  
   DHTSensorReadTH.onRun(dht_sensor_read_handler);
   DHTSensorReadTH.setInterval(1000);
   controller.add(&DHTSensorReadTH);
 
+  keepAliveThread.onRun(keep_alive_handler);
+  keepAliveThread.setInterval(500);
+  controller.add(&keepAliveThread);
 
-  pinMode(LED_BUILTIN, OUTPUT);
   logger->notice("\r\nsetup done\r\n");
 }
 
 void loop() {
-  // controller.run();
-
-  cmdParser.tick();
+  controller.run();
   // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   // delay(1000);                       // wait for a second
   // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
