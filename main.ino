@@ -7,12 +7,13 @@
 #include "src/GeneralLogger/GeneralLogger.h"
 #include "src/SettingsManager/SettingsManager.h"
 #include "src/OutputModule/OutputModule.h"
+#include "src/CommandParser/CommandParser.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 Thread keepAliveThread;
 ThreadController controller(10);
-
+CommandParser cmdParser;
 
 //globals
 GeneralLogger *logger;
@@ -46,6 +47,8 @@ void setup() {
 
   outMod = new OutputModule();
   logger->notice("output module strated\r\n");
+
+  logger->notice("command parser ready");
   
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
@@ -65,6 +68,7 @@ void setup() {
 
 void loop() {
   controller.run();
+  cmdParser.tick();
   // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   // delay(1000);                       // wait for a second
   // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
