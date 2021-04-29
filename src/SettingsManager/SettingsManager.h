@@ -7,8 +7,10 @@
 #include <Arduino.h>
 #include <string.h>
 #include <ESP_EEPROM.h>
+#include <esp8266wifi.h>
 
 #define SETTINGS_JSON_BUFFER_SIZE 128
+#define SETTINGS_APILINK_CRED_LENGTH 128
 #define SETTINGS_OBSERVER_ARR_SIZE 10
 #define SETTINGS_WIFI_CRED_LENGTH 32
 class ISettingsObserver
@@ -26,6 +28,7 @@ class SettingsManager
         char ssid[SETTINGS_WIFI_CRED_LENGTH];
         char password[SETTINGS_WIFI_CRED_LENGTH];
         char darkMode = false;
+        char apiLink[SETTINGS_APILINK_CRED_LENGTH];
     };
 
 private:
@@ -42,6 +45,7 @@ public:
     void getConfigJson(char *txt, int size);
     void persist();
     void loadFromMemory();
+    void WIFIConnect();
 };
 
 #endif // __SETTINGSMANAGER_H__

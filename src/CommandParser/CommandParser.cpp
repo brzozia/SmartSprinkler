@@ -11,6 +11,7 @@ void CommandParser::tick()
             if(cmdParser.equalCommand("setup-wifi")){
                 char * ssid = cmdParser.getCmdParam(1);
                 char * pass = cmdParser.getCmdParam(2);
+                char * apiLink = cmdParser.getCmdParam(3);
                 if(ssid != NULL && pass != NULL){
                     Serial.println("---WIFI SETUP---");
                     Serial.print("ssid: ");
@@ -20,6 +21,7 @@ void CommandParser::tick()
                     Serial.println("\r\n");
                     strncpy(settings->get()->password, pass, SETTINGS_WIFI_CRED_LENGTH);
                     strncpy(settings->get()->ssid, ssid, SETTINGS_WIFI_CRED_LENGTH);
+                    strncpy(settings->get()->apiLink, apiLink, SETTINGS_APILINK_CRED_LENGTH);
 
                 }else{
                     Serial.println("wrong parameters\r\nusage:  setup-wifi <ssid> <password>");
