@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <string.h>
 #include <ESP_EEPROM.h>
-#include <esp8266wifi.h>
 
 #define SETTINGS_JSON_BUFFER_SIZE 128
 #define SETTINGS_APILINK_CRED_LENGTH 128
@@ -45,7 +44,6 @@ public:
     void getConfigJson(char *txt, int size);
     void persist();
     void loadFromMemory();
-    void WIFIConnect();
 };
 
 #endif // __SETTINGSMANAGER_H__

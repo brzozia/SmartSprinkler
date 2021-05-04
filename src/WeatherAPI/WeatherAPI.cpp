@@ -1,11 +1,9 @@
-#include "src/APIGetter/APIGetter.h"
+#include "src/WeatherAPI/WeatherAPI.h"
 
 
-APIGetter::APIGetter(){
+WeatherAPI::WeatherAPI(){}
 
-}
-
-void APIGetter::downloadData(){
+void WeatherAPI::downloadData(){
     http.begin(settings->get()->apiLink);
     int httpCode = http.GET();
 
@@ -23,7 +21,7 @@ void APIGetter::downloadData(){
     }
 }
 
-JSONVar APIGetter::getJsonData(){
+JSONVar WeatherAPI::getJsonData(){
     return &jsonData;
 }
 

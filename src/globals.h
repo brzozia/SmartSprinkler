@@ -8,6 +8,7 @@ class GeneralLogger;
 class SettingsManager;
 extern SettingsManager *settings;
 extern GeneralLogger *logger;
-extern APIGetter *APIdata;
+extern WeatherAPI *weatherAPI;
+extern wifiConnector *wifiConnector;
 
 #endif // __GLOBALS_H__

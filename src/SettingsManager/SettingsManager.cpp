@@ -80,15 +80,3 @@ void SettingsManager::persist(){
   EEPROM.commit();
   logger->notice(F("wrote config to memory"));
 }
-
-void SettingsManager::WIFIConnect(){
-    logger->notice("trying to connect to WIFI\r\n");
-    WiFi.begin(config.ssid, config.password);
- 
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        logger->notice("Connecting..\r\n");
-    }
-
-}
-

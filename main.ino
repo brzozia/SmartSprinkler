@@ -8,7 +8,8 @@
 #include "src/SettingsManager/SettingsManager.h"
 #include "src/OutputModule/OutputModule.h"
 #include "src/CommandParser/CommandParser.h"
-#include "src/APIGetter/APIGetter.h"
+#include "src/WeatherAPI/WeatherAPI.h"
+#include "src/WiFiConnector/WiFiConnector.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
@@ -20,7 +21,8 @@ CommandParser cmdParser;
 GeneralLogger *logger;
 SettingsManager *settings;
 OutputModule *outMod;
-APIGetter *APIData;
+WeatherAPI *weatherAPI;
+WiFiConnector *wifiConnector;
 
 void gnd_humidity_sensor_read_handler(void){
 
@@ -52,11 +54,11 @@ void setup() {
 
   logger->notice("command parser ready");
 
-  settings->WIFIConnect();
+  wifiConnector->WIFIConnect();
   logger->notice("connected to WIFI\r\n");
 
-  APIdata = new APIGetter();
-  logger->notice("got data from API \r\n");
+  weatherAPI = new WeatherAPI();
+  logger->notice("made WeatherAPI object \r\n");
   
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
