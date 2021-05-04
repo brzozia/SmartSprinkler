@@ -23,13 +23,13 @@ class WeatherAPI{
         HTTPClient http;
         DynamicJsonBuffer jsonBuffer(JSON_BUFFER_SIZE);
         JsonObject& data;
-        boolean parsed;
+        bool parsed;
         float temperature[WEATHER_ARRAY_SIZE];
         uint8 humidity[WEATHER_ARRAY_SIZE];
         float windSpeed[WEATHER_ARRAY_SIZE];
         float rainVolume[WEATHER_ARRAY_SIZE];
         float rainProbability[WEATHER_ARRAY_SIZE];
-        void fulfillArrays();
+        void fillArrays();
 
     public:
         WeatherAPI();

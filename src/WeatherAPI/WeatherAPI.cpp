@@ -19,14 +19,14 @@ void WeatherAPI::downloadData(){
           logger->warning("parse data failed!\r\n");
           parsed = false;
     }else{
-        fulfillArrays();
+        fillArrays();
     }
 
     http.end();
     
 }
 
-void fulfillArrays(){
+void fillArrays(){
     for(int i=0;i<WEATHER_ARRAY_SIZE;i++){
         temperature[i] = data[i]["temperature"];
         humidity[i] = data[i]["humidity"];
