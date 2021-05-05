@@ -10,7 +10,7 @@ void WiFiConnector::WIFIConnect(){
     int i=0;
     while (WiFi.status() != WL_CONNECTED) {
         i+=1;
-        if(i%3000==0){
+        if(i%30000==0){
             logger->notice("Connecting..\r\n");
         }
     }
