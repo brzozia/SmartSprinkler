@@ -1,18 +1,15 @@
 #include <WiFiConnector.h>
 
 
-WiFiConnector::WiFiConnector(){}
-
-void WiFiConnector::WIFIConnect(){
+WiFiConnector::WiFiConnector(){
     logger->notice("trying to connect to WIFI\r\n");
     WiFi.begin(settings->get()->ssid, settings->get()->password);
-    
-    int i=0;
+}
+
+void WiFiConnector::WIFIConnect(){
     while (WiFi.status() != WL_CONNECTED) {
-        i+=1;
-        if(i%30000==0){
-            logger->notice("Connecting..\r\n");
-        }
+        delay(500);
+        logger->notice("Connecting..\r\n");
     }
 
 }

@@ -13,6 +13,7 @@
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
+Thread WiFiConnectorTH;
 Thread keepAliveThread;
 ThreadController controller(10);
 CommandParser cmdParser;
@@ -39,6 +40,11 @@ void keep_alive_handler(void){
   outMod->tick();
 }
 
+void wifi_connect(void){
+  wifiConnector->WIFIConnect();
+  logger->notice("connected to WIFI\r\n");
+}
+
 void setup() {
   //Serial and logger
   Serial.begin(115200);
@@ -54,9 +60,6 @@ void setup() {
 
   logger->notice("command parser ready");
 
-  wifiConnector->WIFIConnect();
-  logger->notice("connected to WIFI\r\n");
-
   weatherAPI = new WeatherAPI();
   logger->notice("made WeatherAPI object \r\n");
   
@@ -68,6 +71,10 @@ void setup() {
   DHTSensorReadTH.onRun(dht_sensor_read_handler);
   DHTSensorReadTH.setInterval(1000);
   controller.add(&DHTSensorReadTH);
+
+  WiFiConnectorTH.onRun(wifi_connect);
+  WiFiConnectorTH.setInterval(1000);
+  controller.add(&WiFiConnectorTH);
 
   keepAliveThread.onRun(keep_alive_handler);
   keepAliveThread.setInterval(500);
