@@ -42,7 +42,6 @@ void keep_alive_handler(void){
 
 void wifi_connect(void){
   wifiConnector->WIFIConnect();
-  logger->notice("connected to WIFI\r\n");
 }
 
 void setup() {

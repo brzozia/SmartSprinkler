@@ -1,4 +1,4 @@
-#include "src/WeatherAPI/WeatherAPI.h"
+#include "WeatherAPI.h"
 
 WeatherAPI::WeatherAPI(){
     parsed = false;
@@ -11,10 +11,10 @@ void WeatherAPI::downloadData(){
     if(httpCode>0){ 
       data = jsonBuffer.parseObject(http.getString())["hourly"];
     }else{
-        logger->warning("http GET request error\r\n");
+        logger->warning("http GET request error\r\n error code: %d \r\n", httpCode);
     }
 
-    if(!data.success()){
+    if(!data.success() || httpCode>0){
           logger->warning("parse data failed!\r\n");
           parsed = false;
     }else{
