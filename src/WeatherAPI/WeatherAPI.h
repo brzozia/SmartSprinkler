@@ -24,12 +24,15 @@ class WeatherAPI{
         DynamicJsonBuffer jsonBuffer(JSON_BUFFER_SIZE);
         JsonObject& data;
         bool parsed;
+        int downloadHour;
         float temperature[WEATHER_ARRAY_SIZE];
         uint8 humidity[WEATHER_ARRAY_SIZE];
         float windSpeed[WEATHER_ARRAY_SIZE];
         float rainVolume[WEATHER_ARRAY_SIZE];
         float rainProbability[WEATHER_ARRAY_SIZE];
         void fillArrays();
+        int getCurrentHour();
+        int getCurrentiD();
 
     public:
         WeatherAPI();
