@@ -8,9 +8,12 @@
 #include "src/SettingsManager/SettingsManager.h"
 #include "src/OutputModule/OutputModule.h"
 #include "src/CommandParser/CommandParser.h"
+#include "src/WeatherAPI/WeatherAPI.h"
+#include "src/WiFiConnector/WiFiConnector.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
+Thread WiFiConnectorTH;
 Thread keepAliveThread;
 ThreadController controller(10);
 CommandParser cmdParser;
@@ -19,6 +22,8 @@ CommandParser cmdParser;
 GeneralLogger *logger;
 SettingsManager *settings;
 OutputModule *outMod;
+WeatherAPI *weatherAPI;
+WiFiConnector *wifiConnector;
 
 void gnd_humidity_sensor_read_handler(void){
 
@@ -35,6 +40,10 @@ void keep_alive_handler(void){
   outMod->tick();
 }
 
+void wifi_connect(void){
+  wifiConnector->WIFIConnect();
+}
+
 void setup() {
   //Serial and logger
   Serial.begin(115200);
@@ -49,6 +58,9 @@ void setup() {
   logger->notice("output module strated\r\n");
 
   logger->notice("command parser ready");
+
+  weatherAPI = new WeatherAPI();
+  logger->notice("made WeatherAPI object \r\n");
   
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
@@ -58,6 +70,10 @@ void setup() {
   DHTSensorReadTH.onRun(dht_sensor_read_handler);
   DHTSensorReadTH.setInterval(1000);
   controller.add(&DHTSensorReadTH);
+
+  WiFiConnectorTH.onRun(wifi_connect);
+  WiFiConnectorTH.setInterval(1000);
+  controller.add(&WiFiConnectorTH);
 
   keepAliveThread.onRun(keep_alive_handler);
   keepAliveThread.setInterval(500);
