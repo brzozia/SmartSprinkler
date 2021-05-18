@@ -9,6 +9,10 @@ class WebServer{
 
     private:
     ESP8266WebServer server(PORT_NUMBER);
+    handleHomePage();
+    handleStartWatering();
+    handleStopWatering();
+    handleAddRule();
 
     public:
     WebServer();

@@ -10,10 +10,12 @@
 #include "src/CommandParser/CommandParser.h"
 #include "src/WeatherAPI/WeatherAPI.h"
 #include "src/WiFiConnector/WiFiConnector.h"
+#include "src/WebServer/WebServer.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 Thread WiFiConnectorTH;
+Thread WebServerTH;
 Thread keepAliveThread;
 ThreadController controller(10);
 CommandParser cmdParser;
@@ -24,10 +26,10 @@ SettingsManager *settings;
 OutputModule *outMod;
 WeatherAPI *weatherAPI;
 WiFiConnector *wifiConnector;
+WebServer *server;
 
 void gnd_humidity_sensor_read_handler(void){
 
-  
   //logger
   logger->trace("GND HUMIDITY READ::\r\n");
 }
@@ -42,6 +44,11 @@ void keep_alive_handler(void){
 
 void wifi_connect(void){
   wifiConnector->WIFIConnect();
+}
+
+void start_server(void){
+  server->WebServer();
+   logger->trace("WEB SERVER STARTED::\r\n");
 }
 
 void setup() {
@@ -74,6 +81,9 @@ void setup() {
   WiFiConnectorTH.onRun(wifi_connect);
   WiFiConnectorTH.setInterval(1000);
   controller.add(&WiFiConnectorTH);
+
+  WebServerTH.onRun(start_server));
+  controller.add(&WebServerTH);
 
   keepAliveThread.onRun(keep_alive_handler);
   keepAliveThread.setInterval(500);

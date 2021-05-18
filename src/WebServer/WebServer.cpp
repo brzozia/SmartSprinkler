@@ -2,8 +2,9 @@
 
 WebServer::WebServer(){
     server.on('/', handleHomePage);
-    server.on('/start', handleStart);
-    server.on('/stop', handleStop);
+    server.on('/start', handleStartWatering);
+    server.on('/stop', handleStopWatering);
+    server.on('/add_rule', handleAddRule);
 
     server.begin();
 }
@@ -25,12 +26,14 @@ void handleHomePage(){
     ");
 }
 
-void handleStart(){
+void handleStartWatering(){
     //turn on sprinkler if was turned off
     //disable buton (in browser)
 }
 
-void handleStop(){
+void handleStopWatering(){
     //turn off sprinkler if was turned on
     //disable buton (in browser)
 }
+
+void handleAddRule(){}
