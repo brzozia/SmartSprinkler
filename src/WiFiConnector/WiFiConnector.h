@@ -3,6 +3,7 @@
 
 #include "../globals.h"
 #include <esp8266wifi.h>
+#include "../SettingsManager/SettingsManager.h"
 
 class WiFiConnector{
 

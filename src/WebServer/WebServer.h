@@ -8,14 +8,15 @@
 class WebServer{
 
     private:
-    ESP8266WebServer server(PORT_NUMBER);
-    handleHomePage();
-    handleStartWatering();
-    handleStopWatering();
-    handleAddRule();
+    ESP8266WebServer server;
+    void handleHomePage();
+    void handleStartWatering();
+    void handleStopWatering();
+    void handleAddRule();
 
     public:
     WebServer();
+    void StartServer();
 
 
 };

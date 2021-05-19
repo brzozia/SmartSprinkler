@@ -8,6 +8,7 @@
 #include <string.h>
 #include <ESP_EEPROM.h>
 
+
 #define SETTINGS_JSON_BUFFER_SIZE 128
 #define SETTINGS_APILINK_CRED_LENGTH 128
 #define SETTINGS_OBSERVER_ARR_SIZE 10

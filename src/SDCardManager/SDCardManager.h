@@ -5,7 +5,7 @@
 #include <SPI.h>
 
 
-#define CS_PIN D8
+#define CS_PIN 8
 class SDCardManager{
 
     private:

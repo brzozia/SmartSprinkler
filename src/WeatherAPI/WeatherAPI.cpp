@@ -7,14 +7,16 @@ WeatherAPI::WeatherAPI(){
 void WeatherAPI::downloadData(){
     http.begin(settings->get()->apiLink);
     int httpCode = http.GET();
+    DeserializationError error;
 
     if(httpCode>0){ 
-      data = jsonBuffer.parseObject(http.getString())["hourly"];
+     error = deserializeJson(data, http.getString());
+    //   data = jsonBuffer.parseObject(http.getString())["hourly"];
     }else{
         logger->warning("http GET request error\r\n error code: %d \r\n", httpCode);
     }
 
-    if(!data.success() || httpCode>0){
+    if(error || httpCode>0){
           logger->warning("parse data failed!\r\n");
           parsed = false;
     }else{
@@ -25,12 +27,12 @@ void WeatherAPI::downloadData(){
     
 }
 
-void fillArrays(){
+void WeatherAPI::fillArrays(){
     for(int i=0;i<WEATHER_ARRAY_SIZE;i++){
         temperature[i] = data[i]["temperature"];
         humidity[i] = data[i]["humidity"];
         windSpeed[i] = data[i]["wind_speed"];
-        rainVolume[i] = (data[i]["rain"] == null ? 0.0 : data[i]["rain"]["1h"]);
+        rainVolume[i] = (data[i]["rain"] == NULL ? 0.0 : data[i]["rain"]["1h"]);
         rainProbability[i] = data[i]["pop"];
     }
     
@@ -110,7 +112,7 @@ float WeatherAPI::getMeanWindSpeed(){
     return sum/WEATHER_ARRAY_SIZE;
 }
 
-rainData WeatherAPI::getTodaysRainInfo(){
+WeatherAPI::rainData WeatherAPI::getTodaysRainInfo(){
     struct rainData rainData;
     rainData.sumVolumMM = 0;
     rainData.startHour = WEATHER_ARRAY_SIZE+5;
@@ -142,15 +144,15 @@ rainData WeatherAPI::getTodaysRainInfo(){
     return rainData;
 }
 
-int getCurrentHour(){
+int WeatherAPI::getCurrentHour(){
     time_t timer;
     time(&timer);
     struct tm * timeinfo;
     timeinfo = localtime (&timer);
-    return timeinfo->th_hour;
+    return timeinfo->tm_hour;
 }
 
-int getCurrentID(){
+int WeatherAPI::getCurrentID(){
     int id = downloadHour - getCurrentHour();
     if(id<0){
         id = id + WEATHER_ARRAY_SIZE;

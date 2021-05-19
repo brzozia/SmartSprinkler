@@ -25,7 +25,7 @@ GeneralLogger *logger;
 SettingsManager *settings;
 OutputModule *outMod;
 WeatherAPI *weatherAPI;
-WiFiConnector *wifiConnector;
+WiFiConnector *wifiConn;
 WebServer *server;
 
 void gnd_humidity_sensor_read_handler(void){
@@ -43,11 +43,11 @@ void keep_alive_handler(void){
 }
 
 void wifi_connect(void){
-  wifiConnector->WIFIConnect();
+  wifiConn->WIFIConnect();
 }
 
 void start_server(void){
-  server->WebServer();
+  server->StartServer();
    logger->trace("WEB SERVER STARTED::\r\n");
 }
 
@@ -82,7 +82,7 @@ void setup() {
   WiFiConnectorTH.setInterval(1000);
   controller.add(&WiFiConnectorTH);
 
-  WebServerTH.onRun(start_server));
+  WebServerTH.onRun(start_server);
   controller.add(&WebServerTH);
 
   keepAliveThread.onRun(keep_alive_handler);

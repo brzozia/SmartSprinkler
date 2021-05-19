@@ -1,6 +1,6 @@
 #include "SDCardManager.h"
 
-SDCardManager::SDCardManager{}
+SDCardManager::SDCardManager(){}
 
 bool SDCardManager::connectSDCard(){
     return SD.begin(CS_PIN);
