@@ -32,6 +32,17 @@ void WebServer::handleHomePage(){
 }
 
 void WebServer::handleStartWatering(){
+    File dataFile = SD.open("index.html");
+    int fsizeDisk = dataFile.size();
+    logger->notice("fsizeDisk: %d", fsizeDisk);
+    server.sendHeader("Content-Length", (String)(fsizeDisk));
+    // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
+    size_t fsizeSent = server.streamFile(dataFile, "text/plain");
+    Serial.print("fsizeSent: ");
+    Serial.println(fsizeSent);
+    dataFile.close();
+
+
     //turn on sprinkler if was turned off
     //disable buton (in browser)
 }

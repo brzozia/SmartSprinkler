@@ -11,6 +11,7 @@
 #include "src/WeatherAPI/WeatherAPI.h"
 #include "src/WiFiConnector/WiFiConnector.h"
 #include "src/WebServer/WebServer.h"
+#include "src/SDCardManager/SDCardManager.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
@@ -26,6 +27,7 @@ OutputModule *outMod;
 WeatherAPI *weatherAPI;
 WiFiConnector *wifiConn;
 WebServer *server;
+SDCardManager *sdCard;
 
 void gnd_humidity_sensor_read_handler(void){
 
@@ -60,6 +62,7 @@ void setup() {
   logger->notice("output module strated\r\n");
 
 
+  sdCard = new SDCardManager();
 
   weatherAPI = new WeatherAPI();
   logger->notice("made WeatherAPI object \r\n");

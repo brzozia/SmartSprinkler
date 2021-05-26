@@ -2,6 +2,8 @@
 #define __WEBSERVER_H__
 
 #include "ESP8266WebServer.h"
+#include "../globals.h"
+#include "../SDCardManager/SDCardManager.h"
 
 #define PORT_NUMBER 80
 
