@@ -9,7 +9,7 @@ class CommandParser{
 
     private:
         CmdParser cmdParser;
-        CmdBuffer<32> myBuffer;
+        CmdBuffer<64> myBuffer;
         const int BUFFER_SIZE = 64;
     public:
         void tick();

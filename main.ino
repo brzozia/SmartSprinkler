@@ -83,9 +83,8 @@ void setup() {
 
   WiFiConnectorTH.onRun(wifi_connect);
   WiFiConnectorTH.enabled=true;
-  WiFiConnectorTH.setInterval(1000);
+  WiFiConnectorTH.setInterval(5000);
   controller.add(&WiFiConnectorTH);
-
 
 
   keepAliveThread.onRun(keep_alive_handler);
@@ -93,6 +92,10 @@ void setup() {
   controller.add(&keepAliveThread);
 
   logger->notice("\r\nsetup done\r\n");
+  if (WiFi.status() == WL_CONNECTED) {
+      logger->notice("connected to WIFI \r");
+      Serial.println(WiFi.localIP()); // TODO
+  }
 }
 
 void loop() {
