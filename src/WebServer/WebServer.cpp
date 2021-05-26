@@ -2,7 +2,7 @@
 
 
 WebServer::WebServer():server(PORT_NUMBER){
-    
+    this->StartServer();
 }
 
 void WebServer::StartServer(){
@@ -42,3 +42,8 @@ void WebServer::handleStopWatering(){
 }
 
 void WebServer::handleAddRule(){}
+
+void WebServer::handleClient() 
+{
+    server.handleClient();
+}

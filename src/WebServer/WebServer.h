@@ -17,6 +17,7 @@ class WebServer{
     public:
     WebServer();
     void StartServer();
+    void handleClient();
 
 
 };

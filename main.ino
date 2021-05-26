@@ -15,7 +15,6 @@
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 Thread WiFiConnectorTH;
-Thread WebServerTH;
 Thread keepAliveThread;
 ThreadController controller(10);
 CommandParser cmdParser;
@@ -46,10 +45,6 @@ void wifi_connect(void){
   wifiConn->WIFIConnect();
 }
 
-void start_server(void){
-  server->StartServer();
-  logger->trace("WEB SERVER STARTED::\r\n");
-}
 
 void setup() {
   //Serial and logger
@@ -65,6 +60,7 @@ void setup() {
   logger->notice("output module strated\r\n");
 
 
+
   weatherAPI = new WeatherAPI();
   logger->notice("made WeatherAPI object \r\n");
 
@@ -72,7 +68,7 @@ void setup() {
   logger->notice("wifi connector created");
 
   server = new WebServer();
-  logger->notice("web server created");
+  logger->notice("web server created and started");
   
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
@@ -90,9 +86,7 @@ void setup() {
   WiFiConnectorTH.setInterval(1000);
   controller.add(&WiFiConnectorTH);
 
-  WebServerTH.onRun(start_server);
-  WebServerTH.enabled=false;
-  controller.add(&WebServerTH);
+
 
   keepAliveThread.onRun(keep_alive_handler);
   keepAliveThread.setInterval(500);
@@ -104,6 +98,7 @@ void setup() {
 void loop() {
   controller.run();
   cmdParser.tick();
+  server->handleClient();
   // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   // delay(1000);                       // wait for a second
   // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW

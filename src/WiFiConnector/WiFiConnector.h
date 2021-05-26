@@ -2,7 +2,7 @@
 #define __WIFICONNECTOR_H__
 
 #include "../globals.h"
-#include <esp8266wifi.h>
+#include <ESP8266WiFi.h>
 #include "../SettingsManager/SettingsManager.h"
 
 class WiFiConnector{
