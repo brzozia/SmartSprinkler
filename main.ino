@@ -48,7 +48,7 @@ void wifi_connect(void){
 
 void start_server(void){
   server->StartServer();
-   logger->trace("WEB SERVER STARTED::\r\n");
+  logger->trace("WEB SERVER STARTED::\r\n");
 }
 
 void setup() {
@@ -64,25 +64,34 @@ void setup() {
   outMod = new OutputModule();
   logger->notice("output module strated\r\n");
 
-  logger->notice("command parser ready");
 
   weatherAPI = new WeatherAPI();
   logger->notice("made WeatherAPI object \r\n");
+
+  wifiConn = new WiFiConnector();
+  logger->notice("wifi connector created");
+
+  server = new WebServer();
+  logger->notice("web server created");
   
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
   GNDHumiditySensorTH.setInterval(1000);
+  GNDHumiditySensorTH.enabled = false;
   controller.add(&GNDHumiditySensorTH);
   
   DHTSensorReadTH.onRun(dht_sensor_read_handler);
+  DHTSensorReadTH.enabled = false;
   DHTSensorReadTH.setInterval(1000);
   controller.add(&DHTSensorReadTH);
 
   WiFiConnectorTH.onRun(wifi_connect);
+  WiFiConnectorTH.enabled=true;
   WiFiConnectorTH.setInterval(1000);
   controller.add(&WiFiConnectorTH);
 
   WebServerTH.onRun(start_server);
+  WebServerTH.enabled=false;
   controller.add(&WebServerTH);
 
   keepAliveThread.onRun(keep_alive_handler);
