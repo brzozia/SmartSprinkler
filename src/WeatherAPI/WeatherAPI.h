@@ -1,14 +1,14 @@
 #ifndef __WEATHERAPI_H__
 #define __WEATHERAPI_H__
 
-#include <esp8266httpclient.h>
-#include <Arduino_JSON.h>
+#include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
 #include <time.h>  
 #include "../globals.h"
 #include "../SettingsManager/SettingsManager.h"
 
 #define WEATHER_ARRAY_SIZE 24
-#define JSON_BUFFER_SIZE 24576
+#define JSON_BUFFER_SIZE 14000
 
 class WeatherAPI{
 
@@ -21,8 +21,8 @@ class WeatherAPI{
 
     private:
         HTTPClient http;
-        DynamicJsonBuffer jsonBuffer(JSON_BUFFER_SIZE);
-        JsonObject& data;
+        StaticJsonDocument<JSON_BUFFER_SIZE> data;
+        // JsonObject& data;
         bool parsed;
         int downloadHour;
         float temperature[WEATHER_ARRAY_SIZE];
@@ -32,7 +32,7 @@ class WeatherAPI{
         float rainProbability[WEATHER_ARRAY_SIZE];
         void fillArrays();
         int getCurrentHour();
-        int getCurrentiD();
+        int getCurrentID();
 
     public:
         WeatherAPI();

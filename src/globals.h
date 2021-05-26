@@ -3,12 +3,17 @@
 
 
 class OutputModule;
-extern OutputModule *outMod;
 class GeneralLogger;
 class SettingsManager;
+class WeatherAPI;
+class WiFiConnector;
+class WebServer;
+
+extern OutputModule *outMod;
 extern SettingsManager *settings;
 extern GeneralLogger *logger;
 extern WeatherAPI *weatherAPI;
-extern wifiConnector *wifiConnector;
+extern WiFiConnector *wifiConn;
+extern WebServer *server;
 
 #endif // __GLOBALS_H__

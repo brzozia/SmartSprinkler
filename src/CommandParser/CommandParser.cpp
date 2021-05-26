@@ -28,7 +28,7 @@ void CommandParser::tick()
                 settings->getConfigJson(buf, SETTINGS_JSON_BUFFER_SIZE);
                 Serial.println(buf);
 
-            }else if(cmdParser.equalCommand("setup-api"){
+            }else if(cmdParser.equalCommand("setup-api")){
                 char * apiLink = cmdParser.getCmdParam(0);
                 if(apiLink != NULL){
                     Serial.println("---API SETUP---");
