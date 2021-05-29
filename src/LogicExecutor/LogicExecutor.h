@@ -5,6 +5,8 @@
 #include "../globals.h"
 #include "../SDCardManager/SDCardManager.h"
 #include "../OutputModule/OutputModule.h"
+#include <Arduino.h>
+
 //ELEMENT TYPES
 #define CONDITION_CHECK 1
 #define CONNECTOR 2
@@ -27,8 +29,9 @@
 #define AND_CONNECTOR 1
 #define OR_CONNECTOR 2
 
-#define STRATEGY_JSON_BUFFER_SIZE 200
+#define STRATEGY_JSON_BUFFER_SIZE 256
 #define STRATEGIES_FILE_BUFFER_SIZE 256
+#define STRATEGY_FILE_SIZE 256
 #define MAX_STRATEGIES_NUMBER 10
 
 class LogicExecutor{
@@ -38,7 +41,8 @@ class LogicExecutor{
     } strategy_result_t;
     typedef struct strategy_config{
         int interval_minutes;
-        char name[32];
+        unsigned long last_triggered_time;
+        char name[16];
     }strategy_config_t;
 
     private:

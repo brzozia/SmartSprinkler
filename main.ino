@@ -18,6 +18,7 @@ Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
 Thread WiFiConnectorTH;
 Thread keepAliveThread;
+Thread logicExecutorTH;
 ThreadController controller(10);
 CommandParser cmdParser;
 
@@ -49,6 +50,9 @@ void wifi_connect(void){
   wifiConn->WIFIConnect();
 }
 
+void logic_executor_handler(void){
+  logicExec->tick();
+}
 
 void setup() {
   //Serial and logger
@@ -97,6 +101,10 @@ void setup() {
   keepAliveThread.onRun(keep_alive_handler);
   keepAliveThread.setInterval(500);
   controller.add(&keepAliveThread);
+
+  logicExecutorTH.onRun(logic_executor_handler);
+  logicExecutorTH.setInterval(60000);
+  controller.add(&logicExecutorTH);
 
   logger->notice("\r\nsetup done\r\n");
 

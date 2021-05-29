@@ -2,10 +2,13 @@
 
 LogicExecutor::LogicExecutor(void) 
 {
-    File file = sdCard->openFile("strategies/strategy1.json");
-    uint8_t buffer[256];
-    file.read(buffer, 256);
-    checkStrategy((char*)buffer);
+    for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
+        strategies[i].name[0] = '\0';
+        strategies[i].last_triggered_time = 0;
+    }
+    loadConfiguration();
+
+
 }
 
 void LogicExecutor::loadConfiguration() 
@@ -15,14 +18,15 @@ void LogicExecutor::loadConfiguration()
     strategies_config.read(buffer, STRATEGIES_FILE_BUFFER_SIZE);
     DeserializationError err=deserializeJson(doc, buffer);
     if(err) {
-        Serial.print(F("deserializeJson() failed with code \r\n"));
-        Serial.println(err.c_str());
+        logger->error("deserializeJson() failed with code %s \r\n", err.c_str());
     }   
     JsonArray arr = doc.as<JsonArray>();
     uint8_t idx = 0;
     for(JsonObject element: arr) {
         strategies[idx].interval_minutes = element["interval"];
-        strncpy(strategies[idx].name, element["name"], 32);
+        strncpy(strategies[idx].name, element["name"], 16);
+
+        logger->notice("loaded strategy %s #%d \r\n", strategies[idx].name, strategies[idx].interval_minutes);
         idx++;
         if(idx == MAX_STRATEGIES_NUMBER){
             logger->error("too many strategies in file");
@@ -34,17 +38,31 @@ void LogicExecutor::loadConfiguration()
 void LogicExecutor::tick() 
 {
 
+    for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
+        if(strategies[i].name != '\0'){
+            if(strategies[i].last_triggered_time + strategies[i].interval_minutes*60*1000 < millis()){
+                logger->notice("starting strategy %s \r\n", strategies[i].name);
+                strategies[i].last_triggered_time = millis();
+                char buff[STRATEGY_FILE_SIZE];
+                sprintf(buff, "strategies/%s", strategies[i].name);
+                File file = sdCard->openFile(buff);
+                file.read((uint8_t *) buff, STRATEGY_FILE_SIZE);
+                strategy_result_t result = checkStrategy(buff);
+                logger->notice("status: %T \r\n", result.status);
+                logger->notice("duration: %d \r\n", result.duration_minutes);
+            }
+        }
+    }
 }
 
 LogicExecutor::strategy_result_t LogicExecutor::checkStrategy(const char * strategy) 
 {
     logger->notice("checking strategy\r\n");
     //TODO JSON PARSING ERRORS CAPACITY OVERFLOW ITP.
-    DeserializationError err=deserializeJson(doc, strategy);
+    DeserializationError err = deserializeJson(doc, strategy);
     if(err) {
-        Serial.print(F("deserializeJson() failed with code \r\n"));
-        Serial.println(err.c_str());
-    }
+        logger->error("deserializeJson() failed with code %s \r\n", err.c_str());
+    }  
     JsonArray arr = doc.as<JsonArray>();
     strategy_result_t result;
     bool curr_state = false;
@@ -103,7 +121,6 @@ float LogicExecutor::getSensorValue(byte v)
     }else if(v == AIR_TEMPERATURE){
         return outMod->readAirTemp();
     }else if(v == TIME){
-        Serial.println("TIME");
     }
     return 0.0;
 }

@@ -4,15 +4,16 @@ OutputModule::OutputModule()
 {
     pinMode(BUILTIN_LED , OUTPUT);
     digitalWrite(BUILTIN_LED, LOW);
-    // pinMode(PUMP_PIN, OUTPUT);
+    pinMode(PUMP_PIN, OUTPUT);
     // pinMode(SOIL_HUMIDITY_SENSOR, INPUT);
-    // digitalWrite(PUMP_PIN, LOW);
-    // pinMode(RGB_LED_R_PIN, OUTPUT);
-    // pinMode(RGB_LED_G_PIN, OUTPUT);
-    // pinMode(RGB_LED_B_PIN, OUTPUT);
-    // digitalWrite(RGB_LED_R_PIN, OUTPUT);
-    // digitalWrite(RGB_LED_G_PIN, OUTPUT);
-    // digitalWrite(RGB_LED_B_PIN, OUTPUT);
+    digitalWrite(PUMP_PIN, LOW);
+    pinMode(RGB_LED_R_PIN, OUTPUT);
+    pinMode(RGB_LED_G_PIN, OUTPUT);
+    pinMode(RGB_LED_B_PIN, OUTPUT);
+    digitalWrite(RGB_LED_R_PIN, OUTPUT);
+    digitalWrite(RGB_LED_G_PIN, OUTPUT);
+    digitalWrite(RGB_LED_B_PIN, OUTPUT);
+    ledOn();
 }
 
 void OutputModule::ledOff() 
@@ -68,6 +69,25 @@ void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b)
 
     
 }
+
+void OutputModule::ledSetR(uint8_t v) 
+{
+    ledR = v;
+    analogWrite(RGB_LED_R_PIN, ledR);
+}
+
+void OutputModule::ledSetG(uint8_t v) 
+{
+    ledG = v;
+    analogWrite(RGB_LED_G_PIN, ledG);
+}
+
+void OutputModule::ledSetB(uint8_t v) 
+{
+    ledB = v;
+    analogWrite(RGB_LED_B_PIN, ledB);
+}
+
 
 float OutputModule::readAirHumidity() 
 {

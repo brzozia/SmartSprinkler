@@ -4,6 +4,7 @@
 #include "../globals.h"
 #include <ESP8266WiFi.h>
 #include "../SettingsManager/SettingsManager.h"
+#include "../OutputModule/OutputModule.h"
 
 class WiFiConnector{
 

@@ -18,6 +18,9 @@ class OutputModule{
         void pumpOff();
         void pumpOnForTime(unsigned long duration);
         void ledSetColor(uint8_t r, uint8_t g, uint8_t b);
+        void ledSetR(uint8_t v);
+        void ledSetG(uint8_t v);
+        void ledSetB(uint8_t v);
         float readAirHumidity();
         float readSoilHumidity();
         float readAirTemp();
@@ -35,10 +38,10 @@ class OutputModule{
         bool keepAliveBlinkState = true;
 
         //check if compiler optimizes that
-        const uint8_t PUMP_PIN = 0;
+        const uint8_t PUMP_PIN = 5;
         const uint8_t SOIL_HUMIDITY_SENSOR = 4;
-        const uint8_t RGB_LED_R_PIN = 11;
-        const uint8_t RGB_LED_G_PIN = 2;
+        const uint8_t RGB_LED_R_PIN = 15;
+        const uint8_t RGB_LED_G_PIN = 16;
         const uint8_t RGB_LED_B_PIN = 14;
 };
 
