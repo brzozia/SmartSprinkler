@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#define MAX_WATERING_TIME 10000
 
 class OutputModule{
     public:
@@ -15,9 +16,13 @@ class OutputModule{
         void ledToggle();
         void pumpOn();
         void pumpOff();
+        void pumpOnForTime(unsigned long duration);
         void ledSetColor(uint8_t r, uint8_t g, uint8_t b);
-        int read_humidity();
+        float readAirHumidity();
+        float readSoilHumidity();
+        float readAirTemp();
         void tick();
+        void pumpOffCheck();
         OutputModule();
     private:
         uint8_t ledR = 0;
@@ -25,6 +30,7 @@ class OutputModule{
         uint8_t ledB = 0;
         bool ledOnState;
         unsigned long pumpTimeOn = 0;
+        unsigned long wateringTime = 0;
         bool dark_mode = false;
         bool keepAliveBlinkState = true;
 

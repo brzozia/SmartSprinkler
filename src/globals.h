@@ -9,6 +9,7 @@ class WeatherAPI;
 class WiFiConnector;
 class WebServer;
 class SDCardManager;
+class LogicExecutor;
 
 extern OutputModule *outMod;
 extern SettingsManager *settings;
@@ -17,5 +18,6 @@ extern WeatherAPI *weatherAPI;
 extern WiFiConnector *wifiConn;
 extern WebServer *server;
 extern SDCardManager *sdCard;
+extern LogicExecutor *logicExec;
 
 #endif // __GLOBALS_H__

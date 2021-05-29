@@ -12,6 +12,7 @@
 #include "src/WiFiConnector/WiFiConnector.h"
 #include "src/WebServer/WebServer.h"
 #include "src/SDCardManager/SDCardManager.h"
+#include "src/LogicExecutor/LogicExecutor.h"
 
 Thread GNDHumiditySensorTH;
 Thread DHTSensorReadTH;
@@ -28,6 +29,7 @@ WeatherAPI *weatherAPI;
 WiFiConnector *wifiConn;
 WebServer *server;
 SDCardManager *sdCard;
+LogicExecutor * logicExec;
 
 void gnd_humidity_sensor_read_handler(void){
 
@@ -73,6 +75,8 @@ void setup() {
   server = new WebServer();
   logger->notice("web server created and started\r\n");
   
+  logicExec = new LogicExecutor();
+  logger->notice("logic executor started\r\n");
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
   GNDHumiditySensorTH.setInterval(1000);

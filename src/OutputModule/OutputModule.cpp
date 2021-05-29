@@ -48,6 +48,12 @@ void OutputModule::pumpOff()
     digitalWrite(PUMP_PIN, LOW);
 }
 
+void OutputModule::pumpOnForTime(unsigned long duration) 
+{
+    wateringTime = duration;
+    pumpOn();
+}
+
 void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b) 
 {
 
@@ -63,15 +69,35 @@ void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b)
     
 }
 
-int OutputModule::read_humidity() 
+float OutputModule::readAirHumidity() 
 {
-    return analogRead(SOIL_HUMIDITY_SENSOR);
+    return 78.5;
+}
+
+float OutputModule::readSoilHumidity() 
+{
+    return 34.4;
+}
+
+float OutputModule::readAirTemp() 
+{
+    return 22.2;
 }
 
 void OutputModule::tick() 
 {
     if(keepAliveBlinkState){
         builtinLedToggle();
+    }
+}
+
+void OutputModule::pumpOffCheck() 
+{
+    if(pumpTimeOn + wateringTime < millis()){
+        pumpOff();
+    }
+    if(pumpTimeOn + MAX_WATERING_TIME < millis()){
+        pumpOff();
     }
 }
 
