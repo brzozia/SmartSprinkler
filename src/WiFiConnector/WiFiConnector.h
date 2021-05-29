@@ -8,10 +8,11 @@
 class WiFiConnector{
 
     private:
-
+        wl_status_t last_status;
     public:
         WiFiConnector();
         void WIFIConnect();
+        void disconnect();
 
 };
 

@@ -32,12 +32,12 @@ void WebServer::handleHomePage(){
 }
 
 void WebServer::handleStartWatering(){
-    File dataFile = SD.open("index.html");
+    File dataFile = sdCard->openFile("index.html");
     int fsizeDisk = dataFile.size();
     logger->notice("fsizeDisk: %d", fsizeDisk);
     server.sendHeader("Content-Length", (String)(fsizeDisk));
     // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
-    size_t fsizeSent = server.streamFile(dataFile, "text/plain");
+    size_t fsizeSent = server.streamFile(dataFile, "text/html");
     Serial.print("fsizeSent: ");
     Serial.println(fsizeSent);
     dataFile.close();

@@ -28,6 +28,18 @@ void CommandParser::tick()
                 settings->getConfigJson(buf, SETTINGS_JSON_BUFFER_SIZE);
                 Serial.println(buf);
 
+            }else if(cmdParser.equalCommand("load-settings")){
+                settings->loadFromMemory();
+                Serial.println("loading from memory");
+
+            }else if(cmdParser.equalCommand("persist-settings")){
+                settings->persist();
+                Serial.println("saving to memory");
+
+            }else if(cmdParser.equalCommand("disconnect-wifi")){
+                Serial.println("disconnecting...");
+                wifiConn->disconnect();
+
             }else if(cmdParser.equalCommand("setup-api")){
                 char * apiLink = cmdParser.getCmdParam(0);
                 if(apiLink != NULL){

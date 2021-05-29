@@ -68,10 +68,10 @@ void setup() {
   logger->notice("made WeatherAPI object \r\n");
 
   wifiConn = new WiFiConnector();
-  logger->notice("wifi connector created");
+  logger->notice("wifi connector created\r\n");
 
   server = new WebServer();
-  logger->notice("web server created and started");
+  logger->notice("web server created and started\r\n");
   
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
@@ -86,7 +86,7 @@ void setup() {
 
   WiFiConnectorTH.onRun(wifi_connect);
   WiFiConnectorTH.enabled=true;
-  WiFiConnectorTH.setInterval(5000);
+  WiFiConnectorTH.setInterval(7000);
   controller.add(&WiFiConnectorTH);
 
 
@@ -95,8 +95,9 @@ void setup() {
   controller.add(&keepAliveThread);
 
   logger->notice("\r\nsetup done\r\n");
+
   if (WiFi.status() == WL_CONNECTED) {
-      logger->notice("connected to WIFI \r");
+      logger->notice("connected to WIFI \r\n");
       Serial.println(WiFi.localIP()); // TODO
   }
 }

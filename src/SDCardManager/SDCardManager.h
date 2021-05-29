@@ -7,7 +7,7 @@
 #include "../GeneralLogger/GeneralLogger.h"
 
 
-#define CS_PIN 8
+#define CS_PIN 4
 class SDCardManager{
 
     private:

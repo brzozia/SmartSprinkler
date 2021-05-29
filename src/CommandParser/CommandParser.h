@@ -5,6 +5,7 @@
 #include "../globals.h"
 #include "../GeneralLogger/GeneralLogger.h"
 #include "../SettingsManager/SettingsManager.h"
+#include "../WiFiConnector/WiFiConnector.h"
 class CommandParser{
 
     private:

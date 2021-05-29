@@ -43,7 +43,7 @@ void WeatherAPI::fillArrays(){
 
 float WeatherAPI::getMaxTemperature(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return -1.0;
     }
 
@@ -58,7 +58,7 @@ float WeatherAPI::getMaxTemperature(){
 
 uint8 WeatherAPI::getMaxHumidity(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return 0;
     }
 
@@ -73,7 +73,7 @@ uint8 WeatherAPI::getMaxHumidity(){
 
 uint8 WeatherAPI::getMeanHumidity(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return 0;
     }
 
@@ -86,7 +86,7 @@ uint8 WeatherAPI::getMeanHumidity(){
 
 float WeatherAPI::getMaxWindSpeed(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return -1.0;
     }
 
@@ -101,7 +101,7 @@ float WeatherAPI::getMaxWindSpeed(){
 
 float WeatherAPI::getMeanWindSpeed(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return -1.0;
     }
 
@@ -120,7 +120,7 @@ WeatherAPI::rainData WeatherAPI::getTodaysRainInfo(){
     rainData.rainMaxProbability = 0;
 
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return rainData;
     }
 
@@ -158,11 +158,11 @@ int WeatherAPI::getCurrentID(){
         id = id + WEATHER_ARRAY_SIZE;
     }
     if(id >= 17){
-        logger->warning("Need to download new data");
+        logger->warning("Need to download new data\r\n");
     }
 
     if(id == 23){
-        logger->warning("Need to download new data!! Todays data not in memory!");
+        logger->warning("Need to download new data!! Todays data not in memory!\r\n");
         id = 0;
     }
     return id;
