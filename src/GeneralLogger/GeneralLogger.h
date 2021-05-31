@@ -9,7 +9,7 @@ public:
     template <class T, typename... Args>
     void error(T msg, Args... args)
     {
-        outMod->ledSetR(255);
+        if(outMod != NULL) outMod->ledSetR(255);
         Logging::error(msg, args...);
     }
     // TODO

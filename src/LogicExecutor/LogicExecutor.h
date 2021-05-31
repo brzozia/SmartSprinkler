@@ -37,22 +37,35 @@
 class LogicExecutor{
     typedef struct strategy_result{
         bool status;
-        int duration_minutes; // in minutes
+        int duration_seconds; // in seconds
     } strategy_result_t;
-    typedef struct strategy_config{
-        int interval_minutes;
-        unsigned long last_triggered_time;
-        char name[16];
-    }strategy_config_t;
+
+
 
     private:
-        strategy_config_t strategies[MAX_STRATEGIES_NUMBER];
         StaticJsonDocument<STRATEGY_JSON_BUFFER_SIZE> doc;
         float getSensorValue(byte v);
         strategy_result_t checkStrategy(const char * strategy);
+        int _find_strategy(const char * name);
     public:
+        typedef struct strategy_config{
+        int interval_minutes;
+        unsigned long last_triggered_time;
+        bool enabled;
+        char name[16];
+        }strategy_config_t;
+
         LogicExecutor(void);
+        strategy_config_t strategies[MAX_STRATEGIES_NUMBER];
         void loadConfiguration();
+        bool addStrategy(const String &name, const String &strategy, int enabled, int interval);
+        bool updateStrategyBody(const String &name, const String &strategy);
+        bool updateStrategyState(const String &name, int enabled);
+        bool updateStrategyInterval(const String &name, int interval);
+        void persistConfiguration();
+        bool deleteStrategy(String &name);
+        File getStrategyConfigFile();
+        File getStrategyFile(String &name);
         void tick(); // execute all strategies check weather to run
 
 };

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define MAX_WATERING_TIME 10000
+#define MAX_WATERING_TIME 60000
 
 class OutputModule{
     public:
@@ -16,7 +16,9 @@ class OutputModule{
         void ledToggle();
         void pumpOn();
         void pumpOff();
-        void pumpOnForTime(unsigned long duration);
+        int getLeftTimeInSec();
+        int pumpStatus();
+        void pumpOnForTimeSec(unsigned long duration);
         void ledSetColor(uint8_t r, uint8_t g, uint8_t b);
         void ledSetR(uint8_t v);
         void ledSetG(uint8_t v);

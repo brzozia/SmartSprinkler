@@ -16,6 +16,7 @@ class SDCardManager{
     SDCardManager();
     bool connectSDCard();
     File openFile(const char *filename, uint8_t mode = FILE_READ);
+    bool deleteFile(const char *filename);
 
 };
 

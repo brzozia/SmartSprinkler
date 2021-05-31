@@ -47,11 +47,25 @@ void OutputModule::pumpOn()
 void OutputModule::pumpOff() 
 {
     digitalWrite(PUMP_PIN, LOW);
+    wateringTime = 0;
 }
 
-void OutputModule::pumpOnForTime(unsigned long duration) 
+int OutputModule::getLeftTimeInSec() 
 {
-    wateringTime = duration;
+    if(pumpTimeOn + wateringTime < millis()){
+        return -1;
+    }
+    return (pumpTimeOn + wateringTime - millis())/1000;
+}
+
+int OutputModule::pumpStatus() 
+{
+    return digitalRead(PUMP_PIN);
+}
+
+void OutputModule::pumpOnForTimeSec(unsigned long duration) 
+{
+    wateringTime = duration*1000;
     pumpOn();
 }
 
@@ -109,6 +123,7 @@ void OutputModule::tick()
     if(keepAliveBlinkState){
         builtinLedToggle();
     }
+
 }
 
 void OutputModule::pumpOffCheck() 

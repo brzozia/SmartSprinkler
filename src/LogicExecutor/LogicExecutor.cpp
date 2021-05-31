@@ -5,6 +5,7 @@ LogicExecutor::LogicExecutor(void)
     for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
         strategies[i].name[0] = '\0';
         strategies[i].last_triggered_time = 0;
+        strategies[i].enabled = false;
     }
     loadConfiguration();
 
@@ -24,7 +25,9 @@ void LogicExecutor::loadConfiguration()
     uint8_t idx = 0;
     for(JsonObject element: arr) {
         strategies[idx].interval_minutes = element["interval"];
+        strategies[idx].enabled = element["enabled"];
         strncpy(strategies[idx].name, element["name"], 16);
+
 
         logger->notice("loaded strategy %s #%d \r\n", strategies[idx].name, strategies[idx].interval_minutes);
         idx++;
@@ -35,21 +38,116 @@ void LogicExecutor::loadConfiguration()
     }
 }
 
+bool LogicExecutor::addStrategy(const String &name, const String &strategy, int enabled, int interval) 
+{
+    int idx = 0;
+    for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
+        if(strategies[i].name[0] == '\0'){
+            idx = i;
+            break;
+            // TODO handle max strateges number exceeded;
+        }
+    }
+    File strategyFile = sdCard->openFile(("strategies/"+name+".json").c_str(), sdfat::O_WRITE | sdfat::O_CREAT);
+    strategyFile.print(strategy);
+    strncpy(strategies[idx].name, name.c_str(), 16);
+    strategies[idx].enabled = enabled;
+    strategies[idx].interval_minutes = interval;
+    persistConfiguration();
+
+}
+
+bool LogicExecutor::updateStrategyBody(const String &name, const String &strategy) 
+{
+    int idx = _find_strategy(name.c_str());
+    File strategyFile = sdCard->openFile(("strategies/"+name+".json").c_str(), sdfat::O_WRITE | sdfat::O_CREAT);
+    strategyFile.print(strategy);
+    strategyFile.close();
+    return true;
+}
+
+bool LogicExecutor::updateStrategyState(const String &name, int enabled) 
+{
+    int idx = _find_strategy(name.c_str());
+    strategies[idx].enabled = enabled;
+    persistConfiguration();
+}
+
+bool LogicExecutor::updateStrategyInterval(const String &name, int interval) 
+{
+    int idx = _find_strategy(name.c_str());
+    strategies[idx].interval_minutes = interval;
+    persistConfiguration();    
+}
+
+void LogicExecutor::persistConfiguration() 
+{
+    File strategies_config = sdCard->openFile("strategies/strategies_config.json", sdfat::O_WRITE);
+    char buffer[STRATEGIES_FILE_BUFFER_SIZE];
+    doc.clear();
+    for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
+        if(strategies[i].name[0] != '\0'){
+            JsonObject strategy = doc.createNestedObject();
+            strategy["name"] = strategies[i].name;
+            strategy["interval"] = strategies[i].interval_minutes;
+            strategy["enabled"] = strategies[i].enabled;
+        }   
+    } 
+
+    size_t serialized_size = serializeJson(doc, buffer, STRATEGIES_FILE_BUFFER_SIZE);
+    strategies_config.write(buffer, serialized_size);
+    DeserializationError err=deserializeJson(doc, buffer);
+    if(serialized_size == 0) {
+        logger->error("serializeJson() failed with size %s \r\n", serialized_size);
+    }   
+    strategies_config.close();
+}
+int LogicExecutor::_find_strategy(const char * c_name){
+    for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
+        if(!strcmp(strategies[i].name,c_name)){
+            return i;
+            // TODO handle no strategy;
+        }
+    } 
+}
+bool LogicExecutor::deleteStrategy(String &name) 
+{
+    const char * c_name = name.c_str();
+    int idx = _find_strategy(c_name);
+    strategies[idx].name[0] = '\0';
+    strategies[idx].enabled = false;
+    sdCard->deleteFile(("strategies/"+name+".json").c_str());
+    persistConfiguration();
+}
+
+File LogicExecutor::getStrategyConfigFile() 
+{
+    return sdCard->openFile("strategies/strategies_config.json");
+}
+
+File LogicExecutor::getStrategyFile(String &name) 
+{
+    return sdCard->openFile(("strategies/"+name+".json").c_str());
+}
+
+
+
 void LogicExecutor::tick() 
 {
 
     for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
-        if(strategies[i].name != '\0'){
+        if(strategies[i].name[0] != '\0' && strategies[i].enabled == true){
             if(strategies[i].last_triggered_time + strategies[i].interval_minutes*60*1000 < millis()){
                 logger->notice("starting strategy %s \r\n", strategies[i].name);
                 strategies[i].last_triggered_time = millis();
                 char buff[STRATEGY_FILE_SIZE];
-                sprintf(buff, "strategies/%s", strategies[i].name);
+                sprintf(buff, "strategies/%s.json", strategies[i].name);
                 File file = sdCard->openFile(buff);
                 file.read((uint8_t *) buff, STRATEGY_FILE_SIZE);
                 strategy_result_t result = checkStrategy(buff);
                 logger->notice("status: %T \r\n", result.status);
-                logger->notice("duration: %d \r\n", result.duration_minutes);
+                logger->notice("duration: %d \r\n", result.duration_seconds);
+                outMod->pumpOnForTimeSec(result.duration_seconds);
             }
         }
     }
@@ -101,7 +199,7 @@ LogicExecutor::strategy_result_t LogicExecutor::checkStrategy(const char * strat
             if(strategy_state){
                 Serial.println("start watering\r\n");
                 result.status = true;
-                result.duration_minutes = element["V"];
+                result.duration_seconds = element["V"];
             }else{
                 Serial.println("off watering\r\n");
                 result.status = false;

@@ -19,6 +19,8 @@ Thread DHTSensorReadTH;
 Thread WiFiConnectorTH;
 Thread keepAliveThread;
 Thread logicExecutorTH;
+Thread pumpOffTH;
+
 ThreadController controller(10);
 CommandParser cmdParser;
 
@@ -53,7 +55,9 @@ void wifi_connect(void){
 void logic_executor_handler(void){
   logicExec->tick();
 }
-
+void pump_off_check_handler(void){
+  outMod->pumpOffCheck();
+}
 void setup() {
   //Serial and logger
   Serial.begin(115200);
@@ -65,7 +69,7 @@ void setup() {
   logger->notice("settings manager started\r\n");
 
   outMod = new OutputModule();
-  logger->notice("output module strated\r\n");
+  logger->notice("output module started\r\n");
 
 
   sdCard = new SDCardManager();
@@ -105,6 +109,11 @@ void setup() {
   logicExecutorTH.onRun(logic_executor_handler);
   logicExecutorTH.setInterval(60000);
   controller.add(&logicExecutorTH);
+
+  pumpOffTH.onRun(pump_off_check_handler);
+  pumpOffTH.setInterval(1000);
+  controller.add(&pumpOffTH);
+
 
   logger->notice("\r\nsetup done\r\n");
 
