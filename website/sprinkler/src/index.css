@@ -1,0 +1,23 @@
+html{
+    font-family: Roboto;
+}
+
+body{
+    margin:0;
+}
+
+.green{
+    background-color: rgb(49, 211, 49);
+}
+
+.red{
+    background-color: orangered;
+}
+
+.light-green{
+    background-color: rgb(184, 250, 184);
+}
+
+.light-red{
+    background-color: tomato;
+}
