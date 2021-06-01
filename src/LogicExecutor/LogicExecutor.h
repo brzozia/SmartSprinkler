@@ -1,8 +1,8 @@
 #ifndef __LOGICEXECUTOR_H__
 #define __LOGICEXECUTOR_H__
 
-#include <ArduinoJson.h>
 #include "../globals.h"
+#include <ArduinoJson.h>
 #include "../SDCardManager/SDCardManager.h"
 #include "../OutputModule/OutputModule.h"
 #include <Arduino.h>
@@ -43,7 +43,6 @@ class LogicExecutor{
 
 
     private:
-        StaticJsonDocument<STRATEGY_JSON_BUFFER_SIZE> doc;
         float getSensorValue(byte v);
         strategy_result_t checkStrategy(const char * strategy);
         int _find_strategy(const char * name);

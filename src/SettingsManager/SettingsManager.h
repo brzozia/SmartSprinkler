@@ -9,8 +9,8 @@
 #include <ESP_EEPROM.h>
 
 
-#define SETTINGS_JSON_BUFFER_SIZE 128
-#define SETTINGS_APILINK_CRED_LENGTH 128
+#define SETTINGS_JSON_BUFFER_SIZE 512
+#define SETTINGS_APILINK_CRED_LENGTH 512
 #define SETTINGS_OBSERVER_ARR_SIZE 10
 #define SETTINGS_WIFI_CRED_LENGTH 32
 class ISettingsObserver
@@ -32,7 +32,6 @@ class SettingsManager
     };
 
 private:
-    StaticJsonDocument<SETTINGS_JSON_BUFFER_SIZE> doc;
     struct Config config;
     ISettingsObserver *observers[SETTINGS_OBSERVER_ARR_SIZE];
 

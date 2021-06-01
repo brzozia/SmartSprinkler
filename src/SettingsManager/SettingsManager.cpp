@@ -4,7 +4,7 @@ SettingsManager::SettingsManager()
   EEPROM.begin(sizeof(SettingsManager::Config));
   config.ssid[0] = '\0';
   config.password[0] = '\0';
-  config.apiLink[0] = '\0';
+  strcpy(config.apiLink,"http://api.openweathermap.org/data/2.5/onecall?lat=50.097360&lon=19.893290&exclude=minutely,alerts,daily&appid=32f6d53f235e72a761414f1059f3df31&units=metric");
   config.darkMode = false;
 
 }
@@ -35,7 +35,7 @@ void SettingsManager::subscribe(ISettingsObserver * obs){
 void SettingsManager::loadConfigFromJson(const char *msg)
 {
 
-  DeserializationError error = deserializeJson(doc, msg);
+  DeserializationError error = deserializeJson(jsonDoc, msg);
   if (error)
   {
     logger->error(F("Failed to read configuration\r\n"));
@@ -43,10 +43,10 @@ void SettingsManager::loadConfigFromJson(const char *msg)
   }
 
       
-  strncpy(config.ssid, doc["ssid"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
-  strncpy(config.password, doc["password"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
-  strncpy(config.apiLink, doc["api"] | "errr", SETTINGS_APILINK_CRED_LENGTH);
-  config.darkMode = doc['darkMode'] | false;
+  strncpy(config.ssid, jsonDoc["ssid"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
+  strncpy(config.password, jsonDoc["password"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
+  strncpy(config.apiLink, jsonDoc["api"] | "errr", SETTINGS_APILINK_CRED_LENGTH);
+  config.darkMode = jsonDoc['darkMode'] | false;
 
   notify_all();
 }
@@ -57,12 +57,12 @@ void SettingsManager::getConfigJson(char *txt, int size)
     //LOG ERROR
     logger->error("Failed to write config: buffer is too short\r\n");
   }
-  // StaticJsonDocument<SETTINGS_JSON_BUFFER_SIZE> doc;
-  doc["ssid"] = config.ssid;
-  doc["password"] = config.password;
-  doc["apiLink"] = config.apiLink;
-  doc["darkMode"].set(config.darkMode);
-  if (serializeJson(doc, txt, size) == 0)
+  jsonDoc.clear();
+  jsonDoc["ssid"] = config.ssid;
+  jsonDoc["password"] = config.password;
+  jsonDoc["apiLink"] = config.apiLink;
+  jsonDoc["darkMode"].set(config.darkMode);
+  if (serializeJson(jsonDoc, txt, size) == 0)
   {
     //ERROR
     logger->error(F("Failed to write config to buffer\r\n"));

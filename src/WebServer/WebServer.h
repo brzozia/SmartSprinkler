@@ -6,7 +6,8 @@
 #include "../SDCardManager/SDCardManager.h"
 #include "../OutputModule/OutputModule.h"
 #include "../LogicExecutor/LogicExecutor.h"
-#include "ArduinoJson.h"
+#include "../WeatherAPI/WeatherAPI.h"
+#include <ArduinoJson.h>
 #include "uri/UriGlob.h"
 
 #define PORT_NUMBER 80
@@ -17,7 +18,6 @@ class WebServer{
 
     private:
     ESP8266WebServer server;
-    StaticJsonDocument<512> jsonDoc;
     void handleHomePage();
     void handleStartWatering();
     void handleStopWatering();

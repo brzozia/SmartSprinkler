@@ -72,6 +72,7 @@ void WebServer::handleTestPage()
 
 void WebServer::handleGetSensors() 
 {
+    weatherAPI->downloadData();
     jsonDoc.clear();
     JsonObject sensor = jsonDoc.createNestedObject();
     sensor["name"] = "air_temp";
@@ -87,8 +88,25 @@ void WebServer::handleGetSensors()
     sensor["name"] = "soil_humidity";
     sensor["value"] = outMod->readSoilHumidity();  
     sensor["unit"] = "%";
-    char buffer[256];
-    serializeJson(jsonDoc, buffer, 256);
+
+    sensor = jsonDoc.createNestedObject();    
+    sensor["name"] = "max_humidity24";
+    sensor["value"] = weatherAPI->getMaxHumidity();
+    sensor["unit"] = "%";
+
+    sensor = jsonDoc.createNestedObject();    
+    sensor["name"] = "max_temperature24";
+    sensor["value"] = weatherAPI->getMaxTemperature();
+    sensor["unit"] = "C";
+
+    WeatherAPI::rainData raindData = weatherAPI->getTodaysRainInfo();
+    sensor = jsonDoc.createNestedObject();    
+    sensor["name"] = "rain_max_prop24";
+    sensor["value"] = raindData.rainMaxProbability;
+    sensor["unit"] = "";
+
+    char buffer[512];
+    serializeJson(jsonDoc, buffer, 512);
     server.send(200, "application/json", buffer);
 
 }
@@ -110,8 +128,8 @@ void WebServer::handleAddStrategy(){
 
 void WebServer::handleUpdateStrategy() 
 {
-    String name = server.arg("name");
-    if(server.hasArg("enabled")){
+    String name = server.uri().substring(10);
+    if(server.hasArg("body")){
         logicExec->updateStrategyBody(name, server.arg("body"));
     }
     if(server.hasArg("enabled")){

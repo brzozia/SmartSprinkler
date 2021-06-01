@@ -17,11 +17,12 @@ void LogicExecutor::loadConfiguration()
     File strategies_config = sdCard->openFile("strategies/strategies_config.json");
     uint8_t buffer[STRATEGIES_FILE_BUFFER_SIZE];
     strategies_config.read(buffer, STRATEGIES_FILE_BUFFER_SIZE);
-    DeserializationError err=deserializeJson(doc, buffer);
+    jsonDoc.clear();
+    DeserializationError err=deserializeJson(jsonDoc, buffer);
     if(err) {
         logger->error("deserializeJson() failed with code %s \r\n", err.c_str());
     }   
-    JsonArray arr = doc.as<JsonArray>();
+    JsonArray arr = jsonDoc.as<JsonArray>();
     uint8_t idx = 0;
     for(JsonObject element: arr) {
         strategies[idx].interval_minutes = element["interval"];
@@ -84,19 +85,18 @@ void LogicExecutor::persistConfiguration()
 {
     File strategies_config = sdCard->openFile("strategies/strategies_config.json", sdfat::O_WRITE);
     char buffer[STRATEGIES_FILE_BUFFER_SIZE];
-    doc.clear();
+    jsonDoc.clear();
     for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
         if(strategies[i].name[0] != '\0'){
-            JsonObject strategy = doc.createNestedObject();
+            JsonObject strategy = jsonDoc.createNestedObject();
             strategy["name"] = strategies[i].name;
             strategy["interval"] = strategies[i].interval_minutes;
             strategy["enabled"] = strategies[i].enabled;
         }   
     } 
 
-    size_t serialized_size = serializeJson(doc, buffer, STRATEGIES_FILE_BUFFER_SIZE);
+    size_t serialized_size = serializeJson(jsonDoc, buffer, STRATEGIES_FILE_BUFFER_SIZE);
     strategies_config.write(buffer, serialized_size);
-    DeserializationError err=deserializeJson(doc, buffer);
     if(serialized_size == 0) {
         logger->error("serializeJson() failed with size %s \r\n", serialized_size);
     }   
@@ -157,11 +157,12 @@ LogicExecutor::strategy_result_t LogicExecutor::checkStrategy(const char * strat
 {
     logger->notice("checking strategy\r\n");
     //TODO JSON PARSING ERRORS CAPACITY OVERFLOW ITP.
-    DeserializationError err = deserializeJson(doc, strategy);
+    jsonDoc.clear();
+    DeserializationError err = deserializeJson(jsonDoc, strategy);
     if(err) {
         logger->error("deserializeJson() failed with code %s \r\n", err.c_str());
     }  
-    JsonArray arr = doc.as<JsonArray>();
+    JsonArray arr = jsonDoc.as<JsonArray>();
     strategy_result_t result;
     bool curr_state = false;
     bool strategy_state = false;

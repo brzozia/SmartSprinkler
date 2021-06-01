@@ -6,6 +6,7 @@
 #include "../GeneralLogger/GeneralLogger.h"
 #include "../SettingsManager/SettingsManager.h"
 #include "../WiFiConnector/WiFiConnector.h"
+#include "../ClockProvider/ClockProvider.h"
 class CommandParser{
 
     private:
