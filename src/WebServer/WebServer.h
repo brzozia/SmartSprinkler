@@ -4,8 +4,15 @@
 #include "ESP8266WebServer.h"
 #include "../globals.h"
 #include "../SDCardManager/SDCardManager.h"
+#include "../OutputModule/OutputModule.h"
+#include "../LogicExecutor/LogicExecutor.h"
+#include "../WeatherAPI/WeatherAPI.h"
+#include <ArduinoJson.h>
+#include "uri/UriGlob.h"
 
 #define PORT_NUMBER 80
+#define JSON_DOCUMENT_SIZE 512
+
 
 class WebServer{
 
@@ -14,7 +21,16 @@ class WebServer{
     void handleHomePage();
     void handleStartWatering();
     void handleStopWatering();
-    void handleAddRule();
+    void handleTestPage();
+    void handleGetSensors();
+    void handleGetStatus();
+    void handleAddStrategy();
+    void handleUpdateStrategy();
+    void handleDeleteStrategy();
+    void handleGetStrategy();
+    void handleListStrategies();
+    void handleStrategyStatus();
+    void handleRunStrategy();
 
     public:
     WebServer();

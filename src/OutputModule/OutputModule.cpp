@@ -4,15 +4,16 @@ OutputModule::OutputModule()
 {
     pinMode(BUILTIN_LED , OUTPUT);
     digitalWrite(BUILTIN_LED, LOW);
-    // pinMode(PUMP_PIN, OUTPUT);
+    pinMode(PUMP_PIN, OUTPUT);
     // pinMode(SOIL_HUMIDITY_SENSOR, INPUT);
-    // digitalWrite(PUMP_PIN, LOW);
-    // pinMode(RGB_LED_R_PIN, OUTPUT);
-    // pinMode(RGB_LED_G_PIN, OUTPUT);
-    // pinMode(RGB_LED_B_PIN, OUTPUT);
-    // digitalWrite(RGB_LED_R_PIN, OUTPUT);
-    // digitalWrite(RGB_LED_G_PIN, OUTPUT);
-    // digitalWrite(RGB_LED_B_PIN, OUTPUT);
+    digitalWrite(PUMP_PIN, LOW);
+    pinMode(RGB_LED_R_PIN, OUTPUT);
+    pinMode(RGB_LED_G_PIN, OUTPUT);
+    pinMode(RGB_LED_B_PIN, OUTPUT);
+    digitalWrite(RGB_LED_R_PIN, OUTPUT);
+    digitalWrite(RGB_LED_G_PIN, OUTPUT);
+    digitalWrite(RGB_LED_B_PIN, OUTPUT);
+    ledOn();
 }
 
 void OutputModule::ledOff() 
@@ -46,6 +47,26 @@ void OutputModule::pumpOn()
 void OutputModule::pumpOff() 
 {
     digitalWrite(PUMP_PIN, LOW);
+    wateringTime = 0;
+}
+
+int OutputModule::getLeftTimeInSec() 
+{
+    if(pumpTimeOn + wateringTime < millis()){
+        return -1;
+    }
+    return (pumpTimeOn + wateringTime - millis())/1000;
+}
+
+int OutputModule::pumpStatus() 
+{
+    return digitalRead(PUMP_PIN);
+}
+
+void OutputModule::pumpOnForTimeSec(unsigned long duration) 
+{
+    wateringTime = duration*1000;
+    pumpOn();
 }
 
 void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b) 
@@ -63,15 +84,55 @@ void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b)
     
 }
 
-int OutputModule::read_humidity() 
+void OutputModule::ledSetR(uint8_t v) 
 {
-    return analogRead(SOIL_HUMIDITY_SENSOR);
+    ledR = v;
+    analogWrite(RGB_LED_R_PIN, ledR);
+}
+
+void OutputModule::ledSetG(uint8_t v) 
+{
+    ledG = v;
+    analogWrite(RGB_LED_G_PIN, ledG);
+}
+
+void OutputModule::ledSetB(uint8_t v) 
+{
+    ledB = v;
+    analogWrite(RGB_LED_B_PIN, ledB);
+}
+
+
+float OutputModule::readAirHumidity() 
+{
+    return 78.5;
+}
+
+float OutputModule::readSoilHumidity() 
+{
+    return 34.4;
+}
+
+float OutputModule::readAirTemp() 
+{
+    return 22.2;
 }
 
 void OutputModule::tick() 
 {
     if(keepAliveBlinkState){
         builtinLedToggle();
+    }
+
+}
+
+void OutputModule::pumpOffCheck() 
+{
+    if(pumpTimeOn + wateringTime < millis()){
+        pumpOff();
+    }
+    if(pumpTimeOn + MAX_WATERING_TIME < millis()){
+        pumpOff();
     }
 }
 
