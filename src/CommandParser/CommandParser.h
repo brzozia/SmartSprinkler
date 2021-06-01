@@ -7,6 +7,7 @@
 #include "../SettingsManager/SettingsManager.h"
 #include "../WiFiConnector/WiFiConnector.h"
 #include "../ClockProvider/ClockProvider.h"
+#include "../WeatherAPI/WeatherAPI.h"
 class CommandParser{
 
     private:

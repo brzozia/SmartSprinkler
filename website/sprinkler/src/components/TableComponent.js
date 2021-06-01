@@ -13,11 +13,12 @@ class TableComponent extends React.Component{
     }
     
     componentDidMount(){
-        // fetch('url2')
-        // .then(response => response.json)
-        // .then(response => {
-        //     this.setState({strategies: response});
-        // })
+        fetch('strategies')
+        .then(response => response.json())
+        .then(response => {
+
+            this.setState({strategies: response});
+        })
 
     }
 

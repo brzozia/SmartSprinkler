@@ -1,3 +1,4 @@
+// require('file-loader?name=[name].[ext]!./index.html');
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Grid from '@material-ui/core/Grid';
@@ -8,6 +9,7 @@ import Activities from './components/Activities.js'
 import Navbar from './components/Navbar.js'
 import TableComponent from './components/TableComponent'
 import { CardContent, Typography, Box, CardHeader, Divider } from '@material-ui/core';
+
 
 class DataCard extends React.Component {
     render() {

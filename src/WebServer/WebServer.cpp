@@ -72,7 +72,6 @@ void WebServer::handleTestPage()
 
 void WebServer::handleGetSensors() 
 {
-    weatherAPI->downloadData();
     jsonDoc.clear();
     JsonObject sensor = jsonDoc.createNestedObject();
     sensor["name"] = "air_temp";
@@ -114,7 +113,7 @@ void WebServer::handleGetSensors()
 void WebServer::handleGetStatus() 
 {
     char message[64];
-    sprintf(message, "{\"status\": %d, \"lefTtimeSec\": %d}", outMod->pumpStatus(), outMod->getLeftTimeInSec());
+    sprintf(message, "{\"status\": %d, \"leftTimeSec\": %d}", outMod->pumpStatus(), outMod->getLeftTimeInSec());
     server.send(200, "application/json", message);
 }
 
@@ -155,7 +154,6 @@ void WebServer::handleGetStrategy()
     File dataFile = logicExec->getStrategyFile(uri);
     int fsizeDisk = dataFile.size();
     logger->notice("fsizeDisk: %d", fsizeDisk);
-    server.sendHeader("Content-Length", (String)(fsizeDisk));
     // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
     size_t fsizeSent = server.streamFile(dataFile, "text/html");
     dataFile.close();        
@@ -166,7 +164,7 @@ void WebServer::handleListStrategies()
     File dataFile = logicExec->getStrategyConfigFile();
     int fsizeDisk = dataFile.size();
     logger->notice("fsizeDisk: %d", fsizeDisk);
-    server.sendHeader("Content-Length", (String)(fsizeDisk));
+    // server.sendHeader("Content-Length", (String)(fsizeDisk));
     // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
     size_t fsizeSent = server.streamFile(dataFile, "application/json");
     dataFile.close();    

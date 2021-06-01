@@ -63,7 +63,7 @@ int OutputModule::pumpStatus()
     return digitalRead(PUMP_PIN);
 }
 
-void OutputModule::pumpOnForTimeSec(unsigned long duration) 
+void OutputModule::pumpOnForTimeSec(unsigned long duration, const char * invoker) 
 {
     wateringTime = duration*1000;
     pumpOn();

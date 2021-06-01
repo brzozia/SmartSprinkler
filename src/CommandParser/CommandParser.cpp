@@ -44,6 +44,9 @@ void CommandParser::tick()
                 Serial.print(ESP.getFreeHeap());
                 Serial.println("");
 
+            }else if(cmdParser.equalCommand("weather-download")){
+                weatherAPI->downloadData();
+
             }else if(cmdParser.equalCommand("persist-settings")){
                 settings->persist();
                 Serial.println("saving to memory");
