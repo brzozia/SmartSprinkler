@@ -1,47 +1,84 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
-import { CardContent, Typography, CardHeader, Divider } from '@material-ui/core';
+import { CardContent, Typography, CardHeader, Divider, Grid, Box } from '@material-ui/core';
+import { urls } from '../dicts';
+import Activities from './Activities';
 
 class Status extends React.Component {
+    constructor(props){
+        super(props);
+
+        this.state = {
+            status: {},
+            loaded: false,
+            rerender: true,
+        }
+        this.handleRender = this.handleRender.bind(this);
+    }
+
+    componentDidMount(){
+        fetch(urls.getStatus)
+        .then(resp => resp.json())
+        .then(resp => {
+            this.setState({status: resp, loaded:true})
+        })
+    }
+    
     wateringNow(){
         return(
-            this.props.working==='true' ? 
+            this.state.status.status===1 ? 
             <CardContent>
                 <Typography variant="h6">Current watering</Typography>
-                <Typography variant="subtitle2" display="inline">start: </Typography>
-                <Typography variant="body2"display="inline" >{this.props.start}</Typography>
                 <br></br>
 
-                <Typography variant="subtitle2" display="inline">end: </Typography>
-                <Typography variant="body2" display="inline">{this.props.end}</Typography>
+                <Typography variant="subtitle2" display="inline">remaining time: </Typography>
+                <Typography variant="body2" display="inline">{this.state.status.leftTimeSec} sec</Typography>
                 <br></br>
                 <Typography variant="subtitle2" display="inline">working strategy: </Typography>
-                <Typography variant="body2" display="inline">{this.props.strategyName}</Typography>
+                <Typography variant="body2" display="inline">{this.state.status.strategy}</Typography>
             </CardContent> 
             : 
-            <>
-            </>
+            <CardContent>
+                <Typography variant="h6">Not watering now</Typography>
+            </CardContent>
         );
     }
 
+    handleRender = () => {
+        this.setState((state) => {return ({rerender: !state.rerender})});
+        console.log("aaaaaaaaaaaaa");
+        console.log(this);
+    }
+
     render() {
-      return (
-            <Card >
-                <CardHeader title="Status" className={this.props.working==='true' ? "green" : "red"}/>
-                <Divider variant="middle"/>
-                <div className={this.props.working==='true' ? "light-green" : "light-red"}>
-                {this.wateringNow()}
-                <CardContent title="Status" >
-                    <Typography variant="h6">Last watering</Typography>
-                    <Typography variant="subtitle2" display="inline">start: </Typography>
-                    <Typography variant="body2" display="inline">{this.props.lastStart}</Typography>
-                    <br></br>
-                    <Typography variant="subtitle2" display="inline">end: </Typography>
-                    <Typography variant="body2" display="inline">{this.props.lastEnd}</Typography>
-                </CardContent>
-                </div>
-            </Card>
-      );
+        if(this.state.loaded===false){
+            return(
+                <></>
+            );
+        }
+        else{
+            return (
+                <>
+                    <Grid item xs={12}>
+                        <Box m={1}>
+                            <Card >
+                                <CardHeader title="Status" className={this.state.status.status===1 ? "green" : "red"}/>
+                                <Divider variant="middle"/>
+                                <div className={this.state.status.status===1 ? "light-green" : "light-red"}>
+                                    {this.wateringNow()}
+                                </div>
+                            </Card>
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Box m={1}>
+                            <Activities status={this.state.status.status} onChange={this.handleRender}/>
+                        </Box>
+                    </Grid>
+                </>
+            );
+        }
     }
   }
   

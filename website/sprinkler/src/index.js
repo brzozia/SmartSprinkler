@@ -4,32 +4,13 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import './index.css';
 import Status from './components/Status.js'
-import Activities from './components/Activities.js'
 import Navbar from './components/Navbar.js'
+import Sensors from './components/Sensors.js'
 import TableComponent from './components/TableComponent'
-import { CardContent, Typography, Box, CardHeader, Divider } from '@material-ui/core';
+import { CardContent, Box, CardHeader, Divider } from '@material-ui/core';
+import Strategy from './components/Strategy';
+import AddStrategy from './components/AddStrategy';
 
-class DataCard extends React.Component {
-    render() {
-      return (
-        <Card>
-            <CardContent>
-                <Typography variant="body1" color="textSecondary">last update 5 min ago</Typography>
-                <Grid container justify="space-between">
-                    <Grid item>
-                     <Typography variant="h6" align="left">{this.props.title} </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="h5" align="right" >{this.props.value}</Typography>
-                    </Grid>
-                </Grid>
-            </CardContent>
-        </Card>
-      );
-    }
-  }
-
-  
 
   class Dashboard extends React.Component {
     render() {
@@ -40,17 +21,8 @@ class DataCard extends React.Component {
              </Box>
             <Box pr={3} pl={3}>
             <Grid container>
-                <Grid item sm={3} xs={12} container >
-                    <Grid item xs={12}>
-                        <Box m={2}>
-                            <Status working="true" start="31.05.2021 05:41" end="31.05.2021 6:00" lastStart="30.05.2021 05:41" lastEnd="3o.05.2021 6:00" strategyName="strategy1"/>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Box m={2}>
-                            <Activities working="true"/>
-                        </Box>
-                    </Grid>
+                 <Grid item sm={3} xs={12} container >
+                    <Status/>   
                 </Grid>
 
                 <Grid item sm={3} xs={12} container >
@@ -59,44 +31,28 @@ class DataCard extends React.Component {
                             <CardHeader title="Working strategy"/>
                             <Divider variant="middle"/>
                             <CardContent>
+                                <Strategy strategy="strategy1"/>
                             </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
 
                 <Grid item sm={6} xs={12} container>
-                    <Grid item md={12} container direction="row">
-                        <Grid item xs>
-                            <DataCard title="Temperature" value="23.3 C"/>
-                        </Grid>
-                        <Grid item xs>
-                            <DataCard title="Soil humidity" value="4"/>
-                        </Grid>
-                    </Grid>
-
-                    <Grid item md={12} container direction="row">
-                        <Grid item xs>
-                            <DataCard title="Air humidity" value="60"/>
-                        </Grid>
-                        <Grid item xs>
-                            <DataCard title="Rain probability" value="80%"/>
-                        </Grid>
-                    </Grid>
-                    <Grid item md={12} container direction="row">
-                        <Grid item xs>
-                            <DataCard title="Wind speed mean" value="40 km/h"/>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
+                    <Sensors />
+                 </Grid>
+            </Grid> 
 
             <Grid container>
-                <Grid item xs={8}>
+                <Grid item md={8} xs={12}>
                     <Box m={2}>
                         <TableComponent/>
                     </Box>
                 </Grid>
-                
+                <Grid item md={4} xs={12}>
+                    <Box m={2}>
+                        <AddStrategy/>
+                    </Box>
+                </Grid>
             </Grid>
             </Box>
         </div>

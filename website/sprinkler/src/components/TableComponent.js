@@ -1,5 +1,6 @@
 import React from 'react';
 import Strategy from './Strategy.js'
+import {urls} from '../dicts.js'
 import { Typography, Box, Collapse, Icon, Paper, TableContainer, IconButton, Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 
 
@@ -8,43 +9,51 @@ class TableComponent extends React.Component{
         super(props);
 
         this.state = {
-            strategies: [{name:"ale", interval:5, enabled:true}]
+            strategies: [],
+            loaded: false
         }
     }
     
     componentDidMount(){
-        // fetch('url2')
-        // .then(response => response.json)
-        // .then(response => {
-        //     this.setState({strategies: response});
-        // })
-
+        fetch(urls.getStrategies)
+        .then(response => response.json())
+        .then(response => {
+            this.setState({strategies: response, loaded: true});
+        })
+        .catch(err => console.log(err));
     }
 
     render(){
-      return (
-          <TableContainer component={Paper}>
-              <Box pt={2} pl={3}>
-              <Typography variant="h5">Strategies</Typography>
-              </Box>
-            <Table aria-label="collapsible table">
-              <TableHead>
-                <TableRow>
-                  <TableCell />
-                  <TableCell>Name</TableCell>
-                  <TableCell align="center">Interval</TableCell>
-                  <TableCell align="center">Is working?</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.strategies.map((row) => (
-                  <Row key={row.name} row={row} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+      if(this.state.loaded===false){
+        return(
+            <></>
         );
-    }
+      }
+      else{
+        return (
+            <TableContainer component={Paper}>
+                <Box pt={2} pl={3}>
+                <Typography variant="h5">Strategies</Typography>
+                </Box>
+              <Table aria-label="collapsible table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>Name</TableCell>
+                    <TableCell align="center">Interval [min]</TableCell>
+                    <TableCell align="center">Is working?</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {this.state.strategies.map((row) => (
+                    <Row key={row.name} row={row} />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          );
+        }
+      }
 }
 
 class Row extends React.Component{
@@ -53,20 +62,13 @@ class Row extends React.Component{
 
       this.state = { 
           open: false,
-          strategy: []
         }
   }
 
   setOpen(){
-      fetch('url')
-      .then(response => response.json())
-      .then(response => {
         this.setState((state)=>({
             open: !state.open,
-            strategy: response,
-        }))
-      })
-      
+        }));
   }
 
     render(){
@@ -88,7 +90,7 @@ class Row extends React.Component{
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
               <Collapse in={this.state.open} timeout="auto" unmountOnExit>
                 <Box margin={1}>
-                    <Strategy strategy={this.state.strategy} />
+                    <Strategy strategy={this.props.row.name} />
                 </Box>
               </Collapse>
             </TableCell>
