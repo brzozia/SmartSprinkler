@@ -45,9 +45,7 @@ class Status extends React.Component {
     }
 
     handleRender = () => {
-        this.setState((state) => {return ({rerender: !state.rerender})});
-        console.log("aaaaaaaaaaaaa");
-        console.log(this);
+        window.location.reload();
     }
 
     render() {

@@ -5,18 +5,6 @@ import { CardContent, InputAdornment, CardActions, Icon, IconButton, TextField }
 import { urls } from '../dicts';
 
 class WhileNotWateringActivities extends React.Component{
-    // constructor(props){
-    //     super(props);
-
-    //     this.state = {
-    //         duration: 0,
-    //     }
-    // }
-
-    // handleDuration = (e) =>{
-    //     this.setState({duration:e.target.value});
-    // }
-
     render() {
           return(
             <Card>
