@@ -25,7 +25,7 @@ class Status extends React.Component {
 
     componentDidMount(){
         this.refreshStatus();
-        this.interval = setInterval(() => this.refreshStatus(), 1000*1); // TODO
+        // this.interval = setInterval(() => this.refreshStatus(), 1000*1); // TODO
     }
     componentWillUnmount(){
         clearInterval(this.interval);
