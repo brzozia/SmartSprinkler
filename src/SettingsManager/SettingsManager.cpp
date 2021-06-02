@@ -4,7 +4,7 @@ SettingsManager::SettingsManager()
   EEPROM.begin(sizeof(SettingsManager::Config));
   config.ssid[0] = '\0';
   config.password[0] = '\0';
-  strcpy(config.apiLink,"http://api.openweathermap.org/data/2.5/onecall?lat=50.097360&lon=19.893290&exclude=minutely,alerts,daily&appid=32f6d53f235e72a761414f1059f3df31&units=metric");
+  strcpy(config.apiLink, WEATHER_API_LINK_SECRET);
   config.darkMode = false;
 
 }

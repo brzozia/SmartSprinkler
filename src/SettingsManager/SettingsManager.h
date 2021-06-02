@@ -2,6 +2,7 @@
 #define __SETTINGSMANAGER_H__
 
 #include "../globals.h"
+#include "../credentials.h"
 #include "../GeneralLogger/GeneralLogger.h"
 #include <ArduinoJson.h>
 #include <Arduino.h>
