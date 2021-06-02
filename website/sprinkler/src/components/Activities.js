@@ -37,19 +37,26 @@ class WhileNotWateringActivities extends React.Component{
     render() {
           return(
             <Card>
-                <CardActions display="row" justify="space-around">
-                    
-                    <IconButton aria_label="pause watering" disabled>
-                        <Icon >pause</Icon>
-                    </IconButton>
+                <CardActions display="row" >
+                    <Grid container justify="space-evenly">
+                        <Grid item>
+                            <IconButton aria_label="pause watering" disabled>
+                                <Icon >pause</Icon>
+                            </IconButton>
+                        </Grid>
 
-                    <IconButton aria_label="resume watering" onClick={this.props.start} disabled>
-                        <Icon >play_arrow</Icon>
-                    </IconButton>
+                        <Grid item>
+                            <IconButton aria_label="resume watering" onClick={this.props.start} disabled>
+                                <Icon >play_arrow</Icon>
+                            </IconButton>
+                        </Grid>
 
-                    <IconButton aria_label="stop watering" onClick={this.props.stop}>
-                        <Icon>stop</Icon>
-                    </IconButton>
+                        <Grid item>
+                            <IconButton aria_label="stop watering" onClick={this.props.stop}>
+                                <Icon>stop</Icon>
+                            </IconButton>
+                        </Grid>
+                    </Grid>
                     
                 </CardActions>
             </Card>

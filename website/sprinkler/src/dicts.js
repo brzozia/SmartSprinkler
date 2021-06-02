@@ -16,7 +16,7 @@ let D = {
     4: "wind speed",
     5: "time"    
 }
-
+ 
 let C = {
     1: "<",
     2: "<=",

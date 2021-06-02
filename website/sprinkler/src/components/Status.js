@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card} from '@material-ui/core';
-import { CardContent, Typography, CardHeader, Divider, Grid, Box } from '@material-ui/core';
+import { CardContent, CircularProgress, Typography, CardHeader, Divider, Grid, Box } from '@material-ui/core';
 import { urls } from '../dicts';
 import Activities from './Activities';
 import Strategy from './Strategy';
@@ -23,11 +23,12 @@ class Status extends React.Component {
         .then(resp => {
             this.setState({status: resp, loaded:true})
         })
+        .catch((err)=> console.log(err));
     }
 
     componentDidMount(){
         this.refreshStatus();
-        // this.interval = setInterval(() => this.refreshStatus(), 1000*1); // TODO
+        this.interval = setInterval(() => this.refreshStatus(), 1000*5); // TODO
     }
     componentWillUnmount(){
         clearInterval(this.interval);
@@ -37,7 +38,7 @@ class Status extends React.Component {
         return(
             this.state.status.status===1 ? 
             <CardContent>
-                <Typography variant="h6">Current watering</Typography>
+                <Typography variant="h5">Watering now</Typography>
                 <br></br>
 
                 <Typography variant="subtitle2" display="inline">remaining time: </Typography>
@@ -48,7 +49,7 @@ class Status extends React.Component {
             </CardContent> 
             : 
             <CardContent>
-                <Typography variant="h6">Not watering now</Typography>
+                <Typography variant="h5">Not watering now</Typography>
             </CardContent>
         );
     }
@@ -61,13 +62,13 @@ class Status extends React.Component {
     render() {
         if(this.state.loaded===false){
             return(
-                <></>
+                <CircularProgress />
             );
         }
         else{
             return (
                 <>
-                <Grid item sm={3} xs={12} container >
+                <Grid item sm={6} xs={12} container >
                     <Grid item xs={12}>
                         <Box m={1}>
                             <Card >
@@ -87,7 +88,7 @@ class Status extends React.Component {
                     </Grid>
                 </Grid>
 
-                <Grid item className={this.state.status.status===1 ? "display" : ""} sm={3} xs={12} container >
+                {/* <Grid item className={this.state.status.status===1 ? "none" : "none"} sm={3} xs={12} container >
                     <Grid item xs={12}>
                         <Card>
                             <CardHeader title="Working strategy"/>
@@ -97,7 +98,7 @@ class Status extends React.Component {
                             </CardContent>
                         </Card>
                     </Grid>
-                </Grid>
+                </Grid> */}
 
                 </>
             );

@@ -34,7 +34,7 @@ class StrategyRow extends React.Component{
 
     render(){
         return(
-            <Grid item container xs={12} >
+            <Grid item container xs={12} spacing={1}>
                 <Grid item xs={3}>
                     <FormControl variant="outlined">
                         <InputLabel>Type</InputLabel>
@@ -129,13 +129,13 @@ class AddStrategy extends React.Component {
         this.state = {
             strategy: [],
             rows: [this.getRowElement()],
-            name: " ",
+            name: "",
             interval: 5,
             enabled: true,
             T: "1",
-            D: "",
-            C: "",
-            V: 0,
+            D: "1",
+            C: "1",
+            V: "0",
             show: false,
         }
         this.handleTChange = this.handleTChange.bind(this);
@@ -171,18 +171,18 @@ class AddStrategy extends React.Component {
 
     parseInput(){
         let obj = {};
-        obj.T = this.state.T;
+        obj.T = Number(this.state.T);
         switch (this.state.T){
             case "1":
-                obj.D = this.state.D;
-                obj.C = this.state.C;
-                obj.V = this.state.V;
+                obj.D = Number(this.state.D);
+                obj.C = Number(this.state.C);
+                obj.V = Number(this.state.V);
                 break;
             case "2":
-                obj.C = this.state.C;
+                obj.C = Number(this.state.C);
                 break;
             case "3":
-                obj.V = this.state.V;
+                obj.V = Number(this.state.V);
                 break;
         }
         return obj;
@@ -202,30 +202,54 @@ class AddStrategy extends React.Component {
             return({
                 strategy: [...state.strategy, obj],
                 T: "1",
-                D: "",
-                C: "",
-                V: 0,
-                name: " ",
-                interval: 5,
+                D: "1",
+                C: "1",
+                V: "0",
                 rows: [...state.rows, this.getRowElement() ]
             })
         });
     }
 
+    cleanState(){
+        this.setState(() => {
+            return({
+                strategy: [],
+                T: "1",
+                D: "1",
+                C: "1",
+                V: "0",
+                name: "",
+                interval: 5,
+                rows: [this.getRowElement() ]
+            })
+        });
+    }
+
     submit(){
-        this.addRow();
-        this.setState({rows: [this.getRowElement()]});
-    
-        let formData = new FormData();
-        formData.append('name', this.state.name);
-        formData.append('enabled', this.state.enabled);
-        formData.append('interval', this.state.interval);
-        formData.append('body', JSON.stringify(this.state.strategy));
+        let obj = this.parseInput();
+        let strategyEl = [...this.state.strategy,obj]
+        console.log(strategyEl)
+        // let formData = new FormData();
+        // formData.append('name', this.state.name.replace(" ",""));
+        // formData.append('enabled', this.state.enabled===true ? 1 : 0);
+        // formData.append('interval', this.state.interval);
+        // formData.append('body', this.state.strategy);
 
         fetch(urls.getStrategies, {
-            method:"POST", 
-            body: formData
-        }).catch(err => console.log(err));
+            method: "POST",
+            headers: {
+              'Content-Type':'application/x-www-form-urlencoded'
+            },
+            body: `name=${this.state.name.replace(" ","-")}&enabled=${this.state.enabled===true ? 1 : 0}&interval=${this.state.interval}&body=${encodeURIComponent(JSON.stringify(strategyEl))}`
+        })
+        .catch(err => console.log(err));
+
+        // fetch(urls.getStrategies, {
+        //     method:"POST", 
+        //     body: formData
+        // }).catch(err => console.log(err));
+
+        this.cleanState();
     }
 
     
@@ -289,10 +313,18 @@ class AddStrategy extends React.Component {
                             </IconButton>
                         </Grid>
                     </Grid>
-                    <Grid>
+                    <Grid container>
+                        <Grid item>
                         <Box pt={2}>
                         <Button variant="contained" onClick={() => this.submit()}>Submit</Button>
                         </Box>
+                        </Grid>
+
+                        <Grid item>
+                        <Box pt={2} pl={2}>
+                        <Button variant="contained" onClick={() => this.cleanState()}>Cancel</Button>
+                        </Box>
+                        </Grid>
                     </Grid>
                 </CardContent>
             </Card>

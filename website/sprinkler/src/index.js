@@ -27,19 +27,7 @@ import AddStrategy from './components/AddStrategy';
              </Box>
             <Box pr={3} pl={3}>
             <Grid container>
-                    <Status/>   
-
-                {/* <Grid item sm={3} xs={12} container >
-                    <Grid item xs={12}>
-                        <Card>
-                            <CardHeader title="Working strategy"/>
-                            <Divider variant="middle"/>
-                            <CardContent>
-                                <Strategy strategy="strategy1"/>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid> */}
+                    <Status/>  
 
                 <Grid item sm={6} xs={12} container>
                     <Sensors />
