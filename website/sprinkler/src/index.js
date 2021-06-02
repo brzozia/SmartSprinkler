@@ -1,13 +1,20 @@
-// require('file-loader?name=[name].[ext]!./index.html');
+require('file-loader?name=[name].[ext]!./index.html');
 import React from 'react';
+// window.React = React;
+
 import ReactDOM from 'react-dom';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
+// window.ReactDOM = ReactDOM;
+import {Grid} from '@material-ui/core';
+// window.Grid = Grid;
+import {Card} from '@material-ui/core';
+// window.Card = Card;
 import './index.css';
 import Status from './components/Status.js'
 import Navbar from './components/Navbar.js'
 import Sensors from './components/Sensors.js'
 import TableComponent from './components/TableComponent'
+import MaterialUI from '@material-ui/core';
+
 import { CardContent, Box, CardHeader, Divider } from '@material-ui/core';
 import Strategy from './components/Strategy';
 import AddStrategy from './components/AddStrategy';

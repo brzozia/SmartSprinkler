@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from '@material-ui/core/Card';
+import {Card} from '@material-ui/core';
 import { CardContent, Typography, CardHeader, Divider, Grid, Box } from '@material-ui/core';
 import { urls } from '../dicts';
 import Activities from './Activities';
