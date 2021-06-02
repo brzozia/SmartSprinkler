@@ -11,19 +11,25 @@ class Status extends React.Component {
         this.state = {
             status: {},
             loaded: false,
-            rerender: true,
+            rerender: 1,
         }
         this.handleRender = this.handleRender.bind(this);
     }
-
-    componentDidMount(){
+    refreshStatus(){
         fetch(urls.getStatus)
         .then(resp => resp.json())
         .then(resp => {
             this.setState({status: resp, loaded:true})
         })
     }
-    
+
+    componentDidMount(){
+        this.refreshStatus();
+        this.interval = setInterval(() => this.refreshStatus(), 1000*1); // TODO
+    }
+    componentWillUnmount(){
+        clearInterval(this.interval);
+    }
     wateringNow(){
         return(
             this.state.status.status===1 ? 
@@ -45,7 +51,8 @@ class Status extends React.Component {
     }
 
     handleRender = () => {
-        window.location.reload();
+        console.log(this.state.rerender)
+        this.refreshStatus();
     }
 
     render() {

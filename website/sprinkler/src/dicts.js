@@ -25,7 +25,7 @@ let C = {
     5: "="
 }
 
-let prefix = "http://192.168.1.28/";
+let prefix = "";
 
 let urls = {
     getStrategy: prefix+"strategy/",
