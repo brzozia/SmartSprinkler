@@ -9,7 +9,7 @@ void WiFiConnector::WIFIConnect(){
         WiFi.begin(settings->get()->ssid, settings->get()->password);
 
         if (WiFi.status() == WL_CONNECTED) {
-            logger->notice("connected to WIFI \r");
+            logger->notice("connected to WIFI \r\n");
             Serial.println(WiFi.localIP()); // TODO
         }
     }

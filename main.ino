@@ -61,11 +61,10 @@ void setup() {
   outMod = new OutputModule();
   logger->notice("output module strated\r\n");
 
-
-  sdCard = new SDCardManager();
-
   weatherAPI = new WeatherAPI();
   logger->notice("made WeatherAPI object \r\n");
+
+  sdCard = new SDCardManager();
 
   wifiConn = new WiFiConnector();
   logger->notice("wifi connector created");
@@ -73,6 +72,8 @@ void setup() {
   server = new WebServer();
   logger->notice("web server created and started");
   
+ 
+
   //threading configuration
   GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
   GNDHumiditySensorTH.setInterval(1000);

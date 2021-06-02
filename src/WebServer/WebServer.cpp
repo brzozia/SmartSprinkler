@@ -32,7 +32,8 @@ void WebServer::handleHomePage(){
 }
 
 void WebServer::handleStartWatering(){
-    File dataFile = SD.open("index.html");
+    
+    File dataFile = sdCard->openFile("/index.html");
     int fsizeDisk = dataFile.size();
     logger->notice("fsizeDisk: %d", fsizeDisk);
     server.sendHeader("Content-Length", (String)(fsizeDisk));
