@@ -3,21 +3,15 @@
 
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
-#include <time.h>  
 #include "../globals.h"
 #include "../SettingsManager/SettingsManager.h"
+#include "../ClockProvider/ClockProvider.h"
 
 #define WEATHER_ARRAY_SIZE 24
-#define JSON_BUFFER_SIZE 14000
+#define JSON_BUFFER_SIZE 18000
 
 class WeatherAPI{
 
-    struct rainData{
-        uint8 startHour;
-        uint8 endHour;
-        float sumVolumMM;
-        float rainMaxProbability;
-    };
 
     private:
         HTTPClient http;
@@ -35,6 +29,12 @@ class WeatherAPI{
         int getCurrentID();
 
     public:
+        struct rainData{
+            uint8 startHour;
+            uint8 endHour;
+            float sumVolumMM;
+            float rainMaxProbability;
+        };
         WeatherAPI();
         void downloadData();
         float getMaxTemperature();

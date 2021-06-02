@@ -4,7 +4,7 @@ SettingsManager::SettingsManager()
   EEPROM.begin(sizeof(SettingsManager::Config));
   config.ssid[0] = '\0';
   config.password[0] = '\0';
-  config.apiLink[0] = '\0';
+  strcpy(config.apiLink, WEATHER_API_LINK_SECRET);
   config.darkMode = false;
 
 }
@@ -28,25 +28,25 @@ void SettingsManager::subscribe(ISettingsObserver * obs){
           return;
       }
   }
-  logger->fatal(F("couldnt subscribe to settings; index reached end of array"));
+  logger->fatal(F("couldnt subscribe to settings; index reached end of array\r\n"));
   //LOG ERROR
 }
 
 void SettingsManager::loadConfigFromJson(const char *msg)
 {
 
-  DeserializationError error = deserializeJson(doc, msg);
+  DeserializationError error = deserializeJson(jsonDoc, msg);
   if (error)
   {
-    logger->error(F("Failed to read configuration"));
+    logger->error(F("Failed to read configuration\r\n"));
     return;
   }
 
       
-  strncpy(config.ssid, doc["ssid"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
-  strncpy(config.password, doc["password"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
-  strncpy(config.apiLink, doc["api"] | "errr", SETTINGS_APILINK_CRED_LENGTH);
-  config.darkMode = doc['darkMode'] | false;
+  strncpy(config.ssid, jsonDoc["ssid"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
+  strncpy(config.password, jsonDoc["password"] | "errr", SETTINGS_WIFI_CRED_LENGTH);
+  strncpy(config.apiLink, jsonDoc["api"] | "errr", SETTINGS_APILINK_CRED_LENGTH);
+  config.darkMode = jsonDoc['darkMode'] | false;
 
   notify_all();
 }
@@ -55,28 +55,32 @@ void SettingsManager::getConfigJson(char *txt, int size)
   if (size < SETTINGS_JSON_BUFFER_SIZE)
   {
     //LOG ERROR
-    logger->error("Failed to write config: buffer is too short");
+    logger->error("Failed to write config: buffer is too short\r\n");
   }
-  // StaticJsonDocument<SETTINGS_JSON_BUFFER_SIZE> doc;
-  doc["ssid"] = config.ssid;
-  doc["password"] = config.password;
-  doc["apiLink"] = config.apiLink;
-  doc["darkMode"].set(config.darkMode);
-  if (serializeJson(doc, txt, size) == 0)
+  jsonDoc.clear();
+  jsonDoc["ssid"] = config.ssid;
+  jsonDoc["password"] = config.password;
+  jsonDoc["apiLink"] = config.apiLink;
+  jsonDoc["darkMode"].set(config.darkMode);
+  if (serializeJson(jsonDoc, txt, size) == 0)
   {
     //ERROR
-    logger->error(F("Failed to write config to buffer"));
+    logger->error(F("Failed to write config to buffer\r\n"));
   }
 }
 
 void SettingsManager::loadFromMemory(){
-  EEPROM.get(sizeof(SettingsManager::Config), config);
-  logger->notice(F("loaded config from memory"));
+  EEPROM.get(0, config);
+  logger->notice(F("loaded config from memory\r\n"));
 }
 
 void SettingsManager::persist(){
   //remember to not call very often due to limited FLASH memory R/W cycles
-  EEPROM.put(sizeof(SettingsManager::Config), config);
-  EEPROM.commit();
-  logger->notice(F("wrote config to memory"));
+  EEPROM.put(0, config);
+  bool status = EEPROM.commit();
+  if(status){
+    logger->notice(F("wrote config to memory\r\n"));
+  }else{
+    logger->error("error writing settings to eeprom\r\n");
+  }
 }

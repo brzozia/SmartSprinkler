@@ -8,16 +8,16 @@ void WeatherAPI::downloadData(){
     http.begin(settings->get()->apiLink);
     int httpCode = http.GET();
     DeserializationError error;
-
-    if(httpCode>0){ 
-     error = deserializeJson(data, http.getString());
+    // Serial.println(http.getString());
+    if(httpCode == 200){ 
+     error = deserializeJson(data, http.getStream());
     //   data = jsonBuffer.parseObject(http.getString())["hourly"];
     }else{
         logger->warning("http GET request error\r\n error code: %d \r\n", httpCode);
     }
 
-    if(error || httpCode>0){
-          logger->warning("parse data failed!\r\n");
+    if(error && httpCode == 200){
+          logger->warning("parse data failed! %s\r\n", error.c_str());
           parsed = false;
     }else{
         fillArrays();
@@ -29,21 +29,21 @@ void WeatherAPI::downloadData(){
 
 void WeatherAPI::fillArrays(){
     for(int i=0;i<WEATHER_ARRAY_SIZE;i++){
-        temperature[i] = data[i]["temperature"];
-        humidity[i] = data[i]["humidity"];
-        windSpeed[i] = data[i]["wind_speed"];
-        rainVolume[i] = (data[i]["rain"] == NULL ? 0.0 : data[i]["rain"]["1h"]);
-        rainProbability[i] = data[i]["pop"];
+        temperature[i] = data["hourly"][i]["temp"];
+        humidity[i] = data["hourly"][i]["humidity"];
+        windSpeed[i] = data["hourly"][i]["wind_speed"];
+        rainVolume[i] = (data["hourly"][i]["rain"] == NULL ? 0.0 : data["hourly"][i]["rain"]["1h"]);
+        rainProbability[i] = data["hourly"][i]["pop"];
     }
     
-    downloadHour = getCurrentHour();
+    downloadHour = clockProvider->getHours();
     parsed = true;
     logger -> notice("Arrays fulfilled\r\n");
 }
 
 float WeatherAPI::getMaxTemperature(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return -1.0;
     }
 
@@ -58,7 +58,7 @@ float WeatherAPI::getMaxTemperature(){
 
 uint8 WeatherAPI::getMaxHumidity(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return 0;
     }
 
@@ -73,7 +73,7 @@ uint8 WeatherAPI::getMaxHumidity(){
 
 uint8 WeatherAPI::getMeanHumidity(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return 0;
     }
 
@@ -86,7 +86,7 @@ uint8 WeatherAPI::getMeanHumidity(){
 
 float WeatherAPI::getMaxWindSpeed(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return -1.0;
     }
 
@@ -101,7 +101,7 @@ float WeatherAPI::getMaxWindSpeed(){
 
 float WeatherAPI::getMeanWindSpeed(){
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return -1.0;
     }
 
@@ -120,7 +120,7 @@ WeatherAPI::rainData WeatherAPI::getTodaysRainInfo(){
     rainData.rainMaxProbability = 0;
 
     if(parsed==false){
-        logger->warning("Data not parsed. Cannot calculate.");
+        logger->warning("Data not parsed. Cannot calculate.\r\n");
         return rainData;
     }
 
@@ -144,25 +144,19 @@ WeatherAPI::rainData WeatherAPI::getTodaysRainInfo(){
     return rainData;
 }
 
-int WeatherAPI::getCurrentHour(){
-    time_t timer;
-    time(&timer);
-    struct tm * timeinfo;
-    timeinfo = localtime (&timer);
-    return timeinfo->tm_hour;
-}
+
 
 int WeatherAPI::getCurrentID(){
-    int id = downloadHour - getCurrentHour();
+    int id = downloadHour - clockProvider->getHours();
     if(id<0){
         id = id + WEATHER_ARRAY_SIZE;
     }
     if(id >= 17){
-        logger->warning("Need to download new data");
+        logger->warning("Need to download new data\r\n");
     }
 
     if(id == 23){
-        logger->warning("Need to download new data!! Todays data not in memory!");
+        logger->warning("Need to download new data!! Todays data not in memory!\r\n");
         id = 0;
     }
     return id;
