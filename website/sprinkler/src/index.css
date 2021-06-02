@@ -21,3 +21,7 @@ body{
 .light-red{
     background-color: tomato;
 }
+
+.none{
+    display:none;
+}
