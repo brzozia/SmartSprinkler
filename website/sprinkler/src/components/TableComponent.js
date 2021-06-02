@@ -1,7 +1,7 @@
 import React from 'react';
 import Strategy from './Strategy.js'
 import {urls} from '../dicts.js'
-import { Typography, Box, Collapse, Icon, Paper, TableContainer, IconButton, Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Typography, Box, Collapse, Icon, Paper, Switch, TableContainer, IconButton, Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 
 
 class TableComponent extends React.Component{
@@ -12,7 +12,8 @@ class TableComponent extends React.Component{
             strategies: [],
             loaded: false
         }
-    }
+        this.handleSwitch = this.handleSwitch.bind(this);
+      }
     
     componentDidMount(){
         fetch(urls.getStrategies)
@@ -21,6 +22,28 @@ class TableComponent extends React.Component{
             this.setState({strategies: response, loaded: true});
         })
         .catch(err => console.log(err));
+    }
+
+    handleSwitch(row){
+      this.addRow();
+      this.setState({rows: [this.getRowElement()]});
+  
+      let formData = new FormData();
+      formData.append('enabled', (row.enabled===true ? 1 : 0));
+
+      fetch(urls.getStrategy+row.name, {
+        method: "PUT",
+        body: formData
+      });
+
+      this.setState((state) => {
+        let newStrategies =  state.strategies.map(el => {
+          if(el===row){
+            el.enabled=!el.enabled;
+          }
+        })
+        return({strategies: newStrategies});
+      })
     }
 
     render(){
@@ -41,12 +64,12 @@ class TableComponent extends React.Component{
                     <TableCell />
                     <TableCell>Name</TableCell>
                     <TableCell align="center">Interval [min]</TableCell>
-                    <TableCell align="center">Is working?</TableCell>
+                    <TableCell align="center">Enabled?</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {this.state.strategies.map((row) => (
-                    <Row key={row.name} row={row} />
+                    <Row key={row.name} row={row} handleSwitch={() => this.handleSwitch(row)}/>
                   ))}
                 </TableBody>
               </Table>
@@ -84,7 +107,10 @@ class Row extends React.Component{
               {this.props.row.name}
             </TableCell>
             <TableCell align="center">{this.props.row.interval}</TableCell>
-            <TableCell align="center">{this.props.row.enabled.toString()}</TableCell>
+            <TableCell align="center">
+              {/* {this.props.row.enabled.toString()} */}
+              <Switch checked={this.props.row.enabled} onChange={this.props.handleSwitch} name="enabled" />
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>

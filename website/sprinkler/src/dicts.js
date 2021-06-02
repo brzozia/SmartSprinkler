@@ -34,7 +34,6 @@ let urls = {
     getStatus: prefix+"status",
     postStop: prefix+"stop",
     postStart: prefix+"start",
-
 }
 
 export {T,C,D, connectorTypes, urls}

@@ -3,6 +3,7 @@ import {Card} from '@material-ui/core';
 import { CardContent, Typography, CardHeader, Divider, Grid, Box } from '@material-ui/core';
 import { urls } from '../dicts';
 import Activities from './Activities';
+import Strategy from './Strategy';
 
 class Status extends React.Component {
     constructor(props){
@@ -15,6 +16,7 @@ class Status extends React.Component {
         }
         this.handleRender = this.handleRender.bind(this);
     }
+
     refreshStatus(){
         fetch(urls.getStatus)
         .then(resp => resp.json())
@@ -30,6 +32,7 @@ class Status extends React.Component {
     componentWillUnmount(){
         clearInterval(this.interval);
     }
+
     wateringNow(){
         return(
             this.state.status.status===1 ? 
@@ -64,6 +67,7 @@ class Status extends React.Component {
         else{
             return (
                 <>
+                <Grid item sm={3} xs={12} container >
                     <Grid item xs={12}>
                         <Box m={1}>
                             <Card >
@@ -81,6 +85,20 @@ class Status extends React.Component {
                             <Activities status={this.state.status.status} onChange={this.handleRender}/>
                         </Box>
                     </Grid>
+                </Grid>
+
+                <Grid item className={this.state.status.status===1 ? "display" : ""} sm={3} xs={12} container >
+                    <Grid item xs={12}>
+                        <Card>
+                            <CardHeader title="Working strategy"/>
+                            <Divider variant="middle"/>
+                            <CardContent>
+                                <Strategy strategy={this.state.status.strategy}/>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+
                 </>
             );
         }

@@ -136,6 +136,7 @@ class AddStrategy extends React.Component {
             D: "",
             C: "",
             V: 0,
+            show: false,
         }
         this.handleTChange = this.handleTChange.bind(this);
         this.handleDChange = this.handleDChange.bind(this);
@@ -163,6 +164,9 @@ class AddStrategy extends React.Component {
     }
     handleSwitch = () =>{
         this.setState((state) => {return ({enabled: !state.enabled})});
+    }
+    handleShow = () =>{
+        this.setState((state) => {return ({show: !state.show})});
     }
 
     parseInput(){
@@ -210,12 +214,13 @@ class AddStrategy extends React.Component {
 
     submit(){
         this.addRow();
+        this.setState({rows: [this.getRowElement()]});
     
         let formData = new FormData();
         formData.append('name', this.state.name);
         formData.append('enabled', this.state.enabled);
         formData.append('interval', this.state.interval);
-        formData.append('body', this.state.strategy);
+        formData.append('body', JSON.stringify(this.state.strategy));
 
         fetch(urls.getStrategies, {
             method:"POST", 
@@ -229,8 +234,15 @@ class AddStrategy extends React.Component {
         return(
             <>
             <Card>
-                <CardHeader title="Add strategy"/>
-                <CardContent>
+                <Grid container>
+                <Grid item xs={10}>
+                    <CardHeader title="Add strategy" />
+                </Grid>
+                <Grid item xs={2} style={{"paddingTop":"1rem"}}>
+                    <Button variant="outlined" onClick={this.handleShow}>show</Button>
+                </Grid>
+                </Grid>
+                <CardContent className={this.state.show===false ? "none" : ""}>
                     <Grid container spacing={1} style={{"marginBottom":"1rem"}}>
                         <Grid item xs={3}>
                                 <FormControl variant="outlined"> 
@@ -269,14 +281,7 @@ class AddStrategy extends React.Component {
                             return (
                                <React.Fragment key={i}>{row}</React.Fragment>
                             );
-                        })}
-{/* 
-<StrategyRow handleCChange={this.handleCChange} 
-                                    handleDChange={this.handleDChange} 
-                                    handleTChange={this.handleTChange} 
-                                    handleVChange={this.handleVChange}
-                                /> */}
-                        
+                        })}                        
 
                         <Grid item xs={2}>
                             <IconButton aria_label="add watering" onClick={() => this.addRow()}>
@@ -286,7 +291,7 @@ class AddStrategy extends React.Component {
                     </Grid>
                     <Grid>
                         <Box pt={2}>
-                        <Button variant="contained">Submit</Button>
+                        <Button variant="contained" onClick={() => this.submit()}>Submit</Button>
                         </Box>
                     </Grid>
                 </CardContent>
@@ -297,4 +302,6 @@ class AddStrategy extends React.Component {
     }
 }
 
+
+// TODO this.addRow vs () => this.addRow
 export default AddStrategy;
