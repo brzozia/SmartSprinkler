@@ -16,6 +16,9 @@ module.exports = {
         headers: {
             "Access-Control-Allow-Origin": "http://192.168.1.28"
         },
+        proxy:{
+            '/':'http://192.168.1.28'
+        }
 
     },
     module: {
