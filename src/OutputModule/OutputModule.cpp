@@ -1,11 +1,11 @@
 #include "OutputModule.h"
 
-OutputModule::OutputModule() 
+OutputModule::OutputModule():dht(5, DHT11)
 {
     pinMode(BUILTIN_LED , OUTPUT);
     digitalWrite(BUILTIN_LED, LOW);
     pinMode(PUMP_PIN, OUTPUT);
-    // pinMode(SOIL_HUMIDITY_SENSOR, INPUT);
+    pinMode(SOIL_HUMIDITY_SENSOR, INPUT);
     digitalWrite(PUMP_PIN, LOW);
     pinMode(RGB_LED_R_PIN, OUTPUT);
     pinMode(RGB_LED_G_PIN, OUTPUT);
@@ -14,6 +14,8 @@ OutputModule::OutputModule()
     digitalWrite(RGB_LED_G_PIN, OUTPUT);
     digitalWrite(RGB_LED_B_PIN, OUTPUT);
     ledOn();
+    dht.begin();
+
 }
 
 void OutputModule::ledOff() 
@@ -41,12 +43,12 @@ void OutputModule::ledToggle()
 void OutputModule::pumpOn() 
 {
     pumpTimeOn = millis();
-    digitalWrite(PUMP_PIN, HIGH);
+    digitalWrite(PUMP_PIN, LOW);
 }
 
 void OutputModule::pumpOff() 
 {
-    digitalWrite(PUMP_PIN, LOW);
+    digitalWrite(PUMP_PIN, HIGH);
     wateringTime = 0;
 }
 
@@ -60,7 +62,7 @@ int OutputModule::getLeftTimeInSec()
 
 int OutputModule::pumpStatus() 
 {
-    return digitalRead(PUMP_PIN);
+    return !digitalRead(PUMP_PIN);
 }
 
 void OutputModule::pumpOnForTimeSec(unsigned long duration) 
@@ -105,17 +107,29 @@ void OutputModule::ledSetB(uint8_t v)
 
 float OutputModule::readAirHumidity() 
 {
-    return 78.5;
+      // read without samples.
+    float newH = dht.readHumidity(); // TODO float value is present
+    // if humidity read failed, don't change h value 
+    if (isnan(newH)) {
+      Serial.println("Failed to read humidityfrom DHT sensor!");
+    }
+    return newH;
+
 }
 
 float OutputModule::readSoilHumidity() 
 {
-    return 34.4;
+    return (analogRead(SOIL_HUMIDITY_SENSOR)/900.0)*100.0;
 }
 
 float OutputModule::readAirTemp() 
 {
-    return 22.2;
+    float newT = dht.readTemperature();
+    if (isnan(newT)) {
+      Serial.println("Failed to read temp from DHT sensor!");
+    }
+
+    return (float)((int)newT);
 }
 
 void OutputModule::tick() 

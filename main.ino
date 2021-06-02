@@ -1,4 +1,7 @@
 
+
+
+
 #include <StaticThreadController.h>
 #include <Thread.h>
 #include <ThreadController.h>
@@ -101,6 +104,7 @@ void setup() {
   GNDHumiditySensorTH.setInterval(1000);
   GNDHumiditySensorTH.enabled = false;
   controller.add(&GNDHumiditySensorTH);
+  
   
   DHTSensorReadTH.onRun(dht_sensor_read_handler);
   DHTSensorReadTH.enabled = false;

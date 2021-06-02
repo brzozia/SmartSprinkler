@@ -14,7 +14,7 @@ void WebServer::StartServer(){
 
     UriGlob strategyUri("/strategy/*");
     server.on(strategyUri, HTTP_GET, [this]{handleGetStrategy();});
-    server.on(strategyUri, HTTP_PUT, [this]{handleUpdateStrategy();});
+    server.on(strategyUri, HTTP_PATCH, [this]{handleUpdateStrategy();});
     server.on(strategyUri, HTTP_DELETE, [this]{handleDeleteStrategy();});
     server.on("/strategies", HTTP_GET, [this]{handleListStrategies();});
     server.on("/strategies", HTTP_POST, [this]{handleAddStrategy();});
@@ -138,7 +138,7 @@ void WebServer::handleUpdateStrategy()
     if(server.hasArg("interval")){
         logicExec->updateStrategyInterval(name, server.arg("interval").toInt());
     }
-    server.send(200, "text/json", "{\"name\":\""+name+"\"}");
+    server.send(200, "application/json", "{\"name\":\""+name+"\"}");
 }
 
 void WebServer::handleDeleteStrategy() 
