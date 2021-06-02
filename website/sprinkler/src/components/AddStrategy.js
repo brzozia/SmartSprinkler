@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, Icon, Card, IconButton, TextField, Button, Grid, Box, CardHeader, CardContent} from '@material-ui/core';
+import { FormControl, InputLabel, Select, Icon, Card, IconButton, FormControlLabel,TextField, Button, Grid, Switch, Box, CardHeader, CardContent} from '@material-ui/core';
 import { T, D, C, connectorTypes, urls } from '../dicts';
 
 
@@ -34,7 +34,7 @@ class StrategyRow extends React.Component{
 
     render(){
         return(
-            <>
+            <Grid item container xs={12} >
                 <Grid item xs={3}>
                     <FormControl variant="outlined">
                         <InputLabel>Type</InputLabel>
@@ -118,7 +118,7 @@ class StrategyRow extends React.Component{
                         </Select>
                     </FormControl>
                 </Grid>
-            </>);
+            </Grid>);
     }
 }
 
@@ -128,8 +128,10 @@ class AddStrategy extends React.Component {
 
         this.state = {
             strategy: [],
+            rows: [this.getRowElement()],
             name: " ",
             interval: 5,
+            enabled: true,
             T: "1",
             D: "",
             C: "",
@@ -159,6 +161,9 @@ class AddStrategy extends React.Component {
     handleInterval = (e) =>{
         this.setState({interval: e.target.value});
     }
+    handleSwitch = () =>{
+        this.setState((state) => {return ({enabled: !state.enabled})});
+    }
 
     parseInput(){
         let obj = {};
@@ -179,6 +184,14 @@ class AddStrategy extends React.Component {
         return obj;
     }
 
+    getRowElement(){
+        return(<StrategyRow handleCChange={this.handleCChange} 
+            handleDChange={this.handleDChange} 
+            handleTChange={this.handleTChange} 
+            handleVChange={this.handleVChange}
+        />);
+    }
+
     addRow(){
         let obj = this.parseInput();
         this.setState((state) => {
@@ -190,13 +203,9 @@ class AddStrategy extends React.Component {
                 V: 0,
                 name: " ",
                 interval: 5,
+                rows: [...state.rows, this.getRowElement() ]
             })
-        })
-        return (<StrategyRow handleCChange={this.handleCChange} 
-            handleDChange={this.handleDChange} 
-            handleTChange={this.handleTChange} 
-            handleVChange={this.handleVChange}
-        />)
+        });
     }
 
     submit(){
@@ -204,6 +213,8 @@ class AddStrategy extends React.Component {
     
         let formData = new FormData();
         formData.append('name', this.state.name);
+        formData.append('enabled', this.state.enabled);
+        formData.append('interval', this.state.interval);
         formData.append('body', this.state.strategy);
 
         fetch(urls.getStrategies, {
@@ -214,6 +225,7 @@ class AddStrategy extends React.Component {
 
     
     render(){
+        let i=0;
         return(
             <>
             <Card>
@@ -242,15 +254,29 @@ class AddStrategy extends React.Component {
                                 </form>
                         </FormControl>
                         </Grid>
+                        <Grid item xs={1}>
+                        <FormControlLabel
+                            control={<Switch checked={this.state.enabled} onChange={this.handleSwitch} name="enabled" />}
+                            label="Enabled"
+                        />
+                        </Grid>
                     </Grid>
-                    
+
                     <Grid container spacing={1} >
 
-                        <StrategyRow handleCChange={this.handleCChange} 
-                            handleDChange={this.handleDChange} 
-                            handleTChange={this.handleTChange} 
-                            handleVChange={this.handleVChange}
-                        />
+                        {this.state.rows.map(row => {
+                            i=i+1;
+                            return (
+                               <React.Fragment key={i}>{row}</React.Fragment>
+                            );
+                        })}
+{/* 
+<StrategyRow handleCChange={this.handleCChange} 
+                                    handleDChange={this.handleDChange} 
+                                    handleTChange={this.handleTChange} 
+                                    handleVChange={this.handleVChange}
+                                /> */}
+                        
 
                         <Grid item xs={2}>
                             <IconButton aria_label="add watering" onClick={() => this.addRow()}>
