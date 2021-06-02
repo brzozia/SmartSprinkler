@@ -82,11 +82,10 @@ void setup() {
   outMod = new OutputModule();
   logger->notice("output module started\r\n");
 
-
-  sdCard = new SDCardManager();
-
   weatherAPI = new WeatherAPI();
   logger->notice("made WeatherAPI object \r\n");
+
+  sdCard = new SDCardManager();
 
   wifiConn = new WiFiConnector();
   logger->notice("wifi connector created\r\n");

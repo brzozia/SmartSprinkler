@@ -1,7 +1,7 @@
 import React from 'react';
 import {Grid} from '@material-ui/core';
 import {Card} from '@material-ui/core';
-import { CardContent, Typography} from '@material-ui/core';
+import { CardContent,CircularProgress, Typography} from '@material-ui/core';
 import { urls } from '../dicts';
 
 class Sensor extends React.Component {
@@ -35,18 +35,28 @@ class Sensor extends React.Component {
       }
   }
 
-componentDidMount(){
-  fetch(urls.getSensors)
-  .then(resp => resp.json())
-  .then(resp => {
-    this.setState({sensors:resp, loaded:true});
-  })
-}
+  refreshSensors(){
+    fetch(urls.getSensors)
+    .then(resp => resp.json())
+    .then(resp => {
+      this.setState({sensors:resp, loaded:true});
+    })
+    .catch((err)=> console.log(err));
+  }
+
+  componentDidMount(){
+    this.refreshSensors();
+    this.interval = setInterval(() => this.refreshSensors(), 1000*60*2); // TODO
+  }
+
+  componentWillUnmount(){
+      clearInterval(this.interval);
+  }
 
     render() {
       if(this.state.loaded===false){
         return(
-            <></>
+          <CircularProgress />
         );
     }
     else{

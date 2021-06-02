@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography, CircularProgress } from '@material-ui/core';
 import React from 'react';
 import { C, connectorTypes, D, urls } from '../dicts';
 
@@ -8,7 +8,7 @@ import { C, connectorTypes, D, urls } from '../dicts';
 
             this.state ={
                 strategy: [],
-                id:0,
+                loaded: false,
             }
         }
 
@@ -16,7 +16,7 @@ import { C, connectorTypes, D, urls } from '../dicts';
             fetch(urls.getStrategy+this.props.strategy)
             .then(response => response.json())
             .then(response => {
-                this.setState({strategy: response})
+                this.setState({strategy: response, loaded:true})
             })
             .catch(err => console.log(err));
         }
@@ -35,12 +35,18 @@ import { C, connectorTypes, D, urls } from '../dicts';
         onResult(val){
             return(<>
             <Typography variant="body1">then</Typography>
-            <Typography variant="body1">watering time {val} min</Typography>
+            <Typography variant="body1">watering time {val} sec</Typography>
             </>);
         }
         
         render(){
             let i=0;
+            if(this.state.loaded===false){
+                return(
+                  <CircularProgress />
+                );
+            }
+            else{
             return(
             <>
                 {this.state.strategy.map(line => {
@@ -66,6 +72,7 @@ import { C, connectorTypes, D, urls } from '../dicts';
                 })}
             </>
             );
+            }
         }
 
 }

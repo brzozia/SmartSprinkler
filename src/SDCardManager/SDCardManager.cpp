@@ -5,8 +5,21 @@ SDCardManager::SDCardManager(){
 }
 
 bool SDCardManager::connectSDCard(){
+    pinMode(4,OUTPUT);
+    digitalWrite(4,HIGH);
+    bool status = SD.begin(4);
+    // logger->notice("initialization done.");
 
-    return SD.begin(CS_PIN);
+//   File root = SD.open("/");
+
+//   printDirectory(root, 0);
+
+  logger->notice("done!\n\r");
+
+    if(status==false){
+        logger->error("SD failed to begin");
+    }
+    return status;
 }
 
 File SDCardManager::openFile(const char *filename, uint8_t mode) 

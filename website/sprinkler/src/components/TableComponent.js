@@ -1,7 +1,7 @@
 import React from 'react';
 import Strategy from './Strategy.js'
 import {urls} from '../dicts.js'
-import { Typography, Box, Collapse, Icon, Paper, TableContainer, IconButton, Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Typography, Box, Collapse, CircularProgress, Grid, Icon, Paper, Switch, TableContainer, IconButton, Table, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
 
 
 class TableComponent extends React.Component{
@@ -12,21 +12,62 @@ class TableComponent extends React.Component{
             strategies: [],
             loaded: false
         }
-    }
+        this.handleSwitch = this.handleSwitch.bind(this);
+      }
     
     componentDidMount(){
         fetch(urls.getStrategies)
         .then(response => response.json())
         .then(response => {
-            this.setState({strategies: response, loaded: true});
+            this.setState({strategies: (response===null ? [] : response), loaded: true});
         })
         .catch(err => console.log(err));
+    }
+
+    handleDelete(row){
+      fetch(urls.getStrategy+row.name, {
+        method: "DELETE",
+        headers: {
+          'Content-Type':'application/x-www-form-urlencoded'
+        }
+      });
+
+      this.setState((state) => {
+        let newStrategies = state.strategies.filter(el => {
+         return el!==row;
+        });
+        return({strategies: newStrategies});
+      })
+    }
+
+    handleSwitch(row){  
+      //let formData = new FormData();
+      //formData.append('enabled', (row.enabled===true ? 1 : 0));
+
+      fetch(urls.getStrategy+row.name, {
+        method: "PATCH",
+        headers: {
+          'Content-Type':'application/x-www-form-urlencoded'
+        },
+        body: `enabled=${(row.enabled===true ? 0 : 1)}`
+      });
+
+      this.setState((state) => {
+        let newStrategies = state.strategies;
+        newStrategies.map(el => {
+          if(el===row){
+            el.enabled=!el.enabled;
+          }
+          return el;
+        })
+        return({strategies: newStrategies});
+      })
     }
 
     render(){
       if(this.state.loaded===false){
         return(
-            <></>
+            <CircularProgress />
         );
       }
       else{
@@ -41,12 +82,12 @@ class TableComponent extends React.Component{
                     <TableCell />
                     <TableCell>Name</TableCell>
                     <TableCell align="center">Interval [min]</TableCell>
-                    <TableCell align="center">Is working?</TableCell>
+                    <TableCell align="center">Enabled?</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {this.state.strategies.map((row) => (
-                    <Row key={row.name} row={row} />
+                    <Row key={row.name} row={row} handleDelete={() => this.handleDelete(row)} handleSwitch={() => this.handleSwitch(row)}/>
                   ))}
                 </TableBody>
               </Table>
@@ -84,14 +125,23 @@ class Row extends React.Component{
               {this.props.row.name}
             </TableCell>
             <TableCell align="center">{this.props.row.interval}</TableCell>
-            <TableCell align="center">{this.props.row.enabled.toString()}</TableCell>
+            <TableCell align="center">
+              <Switch checked={this.props.row.enabled} onChange={this.props.handleSwitch} name="enabled" />
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
               <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-                <Box margin={1}>
+                <Grid container spacing={1}>
+                  <Grid item style={{"padding":"0.8rem"}} xs={8}>
                     <Strategy strategy={this.props.row.name} />
-                </Box>
+                    </Grid>
+                    <Grid item xs={4}>
+                    <IconButton aria_label="delete strategy" onClick={this.props.handleDelete}>
+                      <Icon>delete</Icon>
+                  </IconButton>
+                  </Grid>
+                </Grid>
               </Collapse>
             </TableCell>
           </TableRow>

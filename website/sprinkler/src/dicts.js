@@ -16,7 +16,7 @@ let D = {
     4: "wind speed",
     5: "time"    
 }
-
+ 
 let C = {
     1: "<",
     2: "<=",
@@ -34,7 +34,6 @@ let urls = {
     getStatus: prefix+"status",
     postStop: prefix+"stop",
     postStart: prefix+"start",
-
 }
 
 export {T,C,D, connectorTypes, urls}

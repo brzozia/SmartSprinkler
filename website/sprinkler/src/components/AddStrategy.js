@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, Icon, Card, IconButton, TextField, Button, Grid, Box, CardHeader, CardContent} from '@material-ui/core';
+import { FormControl, InputLabel, Select, Icon, Card, IconButton, FormControlLabel,TextField, Button, Grid, Switch, Box, CardHeader, CardContent} from '@material-ui/core';
 import { T, D, C, connectorTypes, urls } from '../dicts';
 
 
@@ -34,7 +34,7 @@ class StrategyRow extends React.Component{
 
     render(){
         return(
-            <>
+            <Grid item container xs={12} spacing={1}>
                 <Grid item xs={3}>
                     <FormControl variant="outlined">
                         <InputLabel>Type</InputLabel>
@@ -118,7 +118,7 @@ class StrategyRow extends React.Component{
                         </Select>
                     </FormControl>
                 </Grid>
-            </>);
+            </Grid>);
     }
 }
 
@@ -128,12 +128,15 @@ class AddStrategy extends React.Component {
 
         this.state = {
             strategy: [],
-            name: " ",
+            rows: [this.getRowElement()],
+            name: "",
             interval: 5,
+            enabled: true,
             T: "1",
-            D: "",
-            C: "",
-            V: 0,
+            D: "1",
+            C: "1",
+            V: "0",
+            show: false,
         }
         this.handleTChange = this.handleTChange.bind(this);
         this.handleDChange = this.handleDChange.bind(this);
@@ -159,24 +162,38 @@ class AddStrategy extends React.Component {
     handleInterval = (e) =>{
         this.setState({interval: e.target.value});
     }
+    handleSwitch = () =>{
+        this.setState((state) => {return ({enabled: !state.enabled})});
+    }
+    handleShow = () =>{
+        this.setState((state) => {return ({show: !state.show})});
+    }
 
     parseInput(){
         let obj = {};
-        obj.T = this.state.T;
+        obj.T = Number(this.state.T);
         switch (this.state.T){
             case "1":
-                obj.D = this.state.D;
-                obj.C = this.state.C;
-                obj.V = this.state.V;
+                obj.D = Number(this.state.D);
+                obj.C = Number(this.state.C);
+                obj.V = Number(this.state.V);
                 break;
             case "2":
-                obj.C = this.state.C;
+                obj.C = Number(this.state.C);
                 break;
             case "3":
-                obj.V = this.state.V;
+                obj.V = Number(this.state.V);
                 break;
         }
         return obj;
+    }
+
+    getRowElement(){
+        return(<StrategyRow handleCChange={this.handleCChange} 
+            handleDChange={this.handleDChange} 
+            handleTChange={this.handleTChange} 
+            handleVChange={this.handleVChange}
+        />);
     }
 
     addRow(){
@@ -185,40 +202,71 @@ class AddStrategy extends React.Component {
             return({
                 strategy: [...state.strategy, obj],
                 T: "1",
-                D: "",
-                C: "",
-                V: 0,
-                name: " ",
-                interval: 5,
+                D: "1",
+                C: "1",
+                V: "0",
+                rows: [...state.rows, this.getRowElement() ]
             })
-        })
-        return (<StrategyRow handleCChange={this.handleCChange} 
-            handleDChange={this.handleDChange} 
-            handleTChange={this.handleTChange} 
-            handleVChange={this.handleVChange}
-        />)
+        });
+    }
+
+    cleanState(){
+        this.setState(() => {
+            return({
+                strategy: [],
+                T: "1",
+                D: "1",
+                C: "1",
+                V: "0",
+                name: "",
+                interval: 5,
+                rows: [this.getRowElement() ]
+            })
+        });
     }
 
     submit(){
-        this.addRow();
-    
-        let formData = new FormData();
-        formData.append('name', this.state.name);
-        formData.append('body', this.state.strategy);
+        let obj = this.parseInput();
+        let strategyEl = [...this.state.strategy,obj]
+        console.log(strategyEl)
+        // let formData = new FormData();
+        // formData.append('name', this.state.name.replace(" ",""));
+        // formData.append('enabled', this.state.enabled===true ? 1 : 0);
+        // formData.append('interval', this.state.interval);
+        // formData.append('body', this.state.strategy);
 
         fetch(urls.getStrategies, {
-            method:"POST", 
-            body: formData
-        }).catch(err => console.log(err));
+            method: "POST",
+            headers: {
+              'Content-Type':'application/x-www-form-urlencoded'
+            },
+            body: `name=${this.state.name.replace(" ","-")}&enabled=${this.state.enabled===true ? 1 : 0}&interval=${this.state.interval}&body=${encodeURIComponent(JSON.stringify(strategyEl))}`
+        })
+        .catch(err => console.log(err));
+
+        // fetch(urls.getStrategies, {
+        //     method:"POST", 
+        //     body: formData
+        // }).catch(err => console.log(err));
+
+        this.cleanState();
     }
 
     
     render(){
+        let i=0;
         return(
             <>
             <Card>
-                <CardHeader title="Add strategy"/>
-                <CardContent>
+                <Grid container>
+                <Grid item xs={10}>
+                    <CardHeader title="Add strategy" />
+                </Grid>
+                <Grid item xs={2} style={{"paddingTop":"1rem"}}>
+                    <Button variant="outlined" onClick={this.handleShow}>show</Button>
+                </Grid>
+                </Grid>
+                <CardContent className={this.state.show===false ? "none" : ""}>
                     <Grid container spacing={1} style={{"marginBottom":"1rem"}}>
                         <Grid item xs={3}>
                                 <FormControl variant="outlined"> 
@@ -242,15 +290,22 @@ class AddStrategy extends React.Component {
                                 </form>
                         </FormControl>
                         </Grid>
+                        <Grid item xs={1}>
+                        <FormControlLabel
+                            control={<Switch checked={this.state.enabled} onChange={this.handleSwitch} name="enabled" />}
+                            label="Enabled"
+                        />
+                        </Grid>
                     </Grid>
-                    
+
                     <Grid container spacing={1} >
 
-                        <StrategyRow handleCChange={this.handleCChange} 
-                            handleDChange={this.handleDChange} 
-                            handleTChange={this.handleTChange} 
-                            handleVChange={this.handleVChange}
-                        />
+                        {this.state.rows.map(row => {
+                            i=i+1;
+                            return (
+                               <React.Fragment key={i}>{row}</React.Fragment>
+                            );
+                        })}                        
 
                         <Grid item xs={2}>
                             <IconButton aria_label="add watering" onClick={() => this.addRow()}>
@@ -258,10 +313,18 @@ class AddStrategy extends React.Component {
                             </IconButton>
                         </Grid>
                     </Grid>
-                    <Grid>
+                    <Grid container>
+                        <Grid item>
                         <Box pt={2}>
-                        <Button variant="contained">Submit</Button>
+                        <Button variant="contained" onClick={() => this.submit()}>Submit</Button>
                         </Box>
+                        </Grid>
+
+                        <Grid item>
+                        <Box pt={2} pl={2}>
+                        <Button variant="contained" onClick={() => this.cleanState()}>Cancel</Button>
+                        </Box>
+                        </Grid>
                     </Grid>
                 </CardContent>
             </Card>
@@ -271,4 +334,6 @@ class AddStrategy extends React.Component {
     }
 }
 
+
+// TODO this.addRow vs () => this.addRow
 export default AddStrategy;
