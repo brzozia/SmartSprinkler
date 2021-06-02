@@ -5,18 +5,6 @@ import { CardContent, InputAdornment, CardActions, Icon, IconButton, TextField }
 import { urls } from '../dicts';
 
 class WhileNotWateringActivities extends React.Component{
-    // constructor(props){
-    //     super(props);
-
-    //     this.state = {
-    //         duration: 0,
-    //     }
-    // }
-
-    // handleDuration = (e) =>{
-    //     this.setState({duration:e.target.value});
-    // }
-
     render() {
           return(
             <Card>
@@ -24,7 +12,7 @@ class WhileNotWateringActivities extends React.Component{
                     <Grid item sm={10}>
                         <CardContent>
                             <form noValidate autoComplete="off">
-                                <TextField id="outlined-basic" InputProps={{endAdornment: <InputAdornment position="end">min</InputAdornment>,}} 
+                                <TextField id="outlined-basic" InputProps={{endAdornment: <InputAdornment position="end">sec</InputAdornment>,}} 
                                 value={this.props.duration} 
                                 onChange={this.props.handleDuration} 
                                 label="Watering time" 
@@ -87,7 +75,8 @@ class WhileNotWateringActivities extends React.Component{
             method:"POST",
             body: formData
         })
-        .then(this.props.onChange);
+        .then(this.props.onChange)
+        .catch(err => console.log(err));
     }
 
     stop = () => {

@@ -51,12 +51,12 @@ import AddStrategy from './components/AddStrategy';
             </Grid> 
 
             <Grid container>
-                <Grid item md={8} xs={12}>
+                <Grid item md={5} xs={12}>
                     <Box m={2}>
                         <TableComponent/>
                     </Box>
                 </Grid>
-                <Grid item md={4} xs={12}>
+                <Grid item md={7} xs={12}>
                     <Box m={2}>
                         <AddStrategy/>
                     </Box>
