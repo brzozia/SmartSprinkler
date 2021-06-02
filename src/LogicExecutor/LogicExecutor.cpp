@@ -147,7 +147,7 @@ void LogicExecutor::tick()
                 strategy_result_t result = checkStrategy(buff);
                 logger->notice("status: %T \r\n", result.status);
                 logger->notice("duration: %d \r\n", result.duration_seconds);
-                outMod->pumpOnForTimeSec(result.duration_seconds);
+                if(result.status) outMod->pumpOnForTimeSec(result.duration_seconds);
             }
         }
     }
@@ -206,6 +206,7 @@ LogicExecutor::strategy_result_t LogicExecutor::checkStrategy(const char * strat
                 result.status = false;
             }
         }
+        elem_num++;
     }
 
     return result;

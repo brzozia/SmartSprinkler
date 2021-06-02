@@ -6,7 +6,7 @@ SettingsManager::SettingsManager()
   config.password[0] = '\0';
   strcpy(config.apiLink, WEATHER_API_LINK_SECRET);
   config.darkMode = false;
-
+  loadFromMemory();
 }
 
 SettingsManager::Config* SettingsManager::get(){
