@@ -6,7 +6,8 @@ WebServer::WebServer():server(PORT_NUMBER){
 }
 
 void WebServer::StartServer(){
-    server.on("/", [this]{handleHomePage();});
+    server.on("/index.html", [this]{handleHomePage();});
+    server.on("/index.bundle.js", [this]{handleHomePage();});
     server.on("/start", [this]{handleStartWatering();});
     server.on("/stop", [this]{handleStopWatering();});
     server.on("/status", [this]{handleGetStatus();});
@@ -18,15 +19,15 @@ void WebServer::StartServer(){
     server.on("/strategies", HTTP_GET, [this]{handleListStrategies();});
     server.on("/strategies", HTTP_POST, [this]{handleAddStrategy();});
     server.on("/sensors", HTTP_GET, [this]{handleGetSensors();});
-
     server.begin();
 }
 
 void WebServer::handleHomePage(){
-    File dataFile = sdCard->openFile("index.html");
+    String name = server.uri().substring(1);
+    File dataFile = sdCard->openFile(name.c_str());
     int fsizeDisk = dataFile.size();
-    server.sendHeader("Content-Length", (String)(fsizeDisk));
-    // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
+    // server.sendHeader("Content-Length", (String)(fsizeDisk));
+    server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
     size_t fsizeSent = server.streamFile(dataFile, "text/html");
     dataFile.close();
 

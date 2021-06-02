@@ -12,6 +12,9 @@ void WiFiConnector::WIFIConnect(){
             logger->notice("connected to WIFI \r\n");
             outMod->ledSetG(255);
             Serial.println(WiFi.localIP()); // TODO
+            
+            clockProvider->ntpSynchronize();
+            weatherAPI->downloadData();
     }
 
     if (WiFi.status() != WL_CONNECTED) {

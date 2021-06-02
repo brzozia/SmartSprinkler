@@ -5,6 +5,8 @@
 #include <ESP8266WiFi.h>
 #include "../SettingsManager/SettingsManager.h"
 #include "../OutputModule/OutputModule.h"
+#include "../ClockProvider/ClockProvider.h"
+#include "../WeatherAPI/WeatherAPI.h"
 
 class WiFiConnector{
 
