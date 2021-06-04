@@ -20,7 +20,8 @@ Urządzenie składa się z:
 * rezystancyjnego czujnika wilgotności gleby
 * diód informujących o stanie urządzenia
 * modułu wykonawczego (przekaźnika/diody LED)
-
+ 
+![platforma-sprzetowa](/img/uklad.png)
 
 ## Architektura systemu  
 Sercem systemu jest mikrokontroler z modułem WiFi, który pobiera  dane z czujników oraz prognozę pogody z otwartego serwisu pogodowego OpenWeather, a następnie przetwarza te dane na podstawie zdefiniowanych przez użytkownika reguł. Użytkownik poprzez interfejs webowy może sterować całym urządzeniem.  
@@ -78,4 +79,6 @@ Strona internetowa umożliwia monitorowanie stanu podlewania, obserwację danych
 Przy pomocy interfejsu możemy zobaczyć zdefiniowane strategie podlewania,  zarządzać ich stanem (włączenie/wyłączenie), usunąć wybraną strategię oraz  zdefiniować nową. (Być może będziemy mogli również edytować istniejącą strategię). 
 
 Stan podlewania jest odświeżany co pięć sekund, a wartość sensorów co minutę.  
-
+ 
+ ![dashboard](/img/dashboard.png) 
+ 
