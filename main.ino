@@ -1,7 +1,3 @@
-
-
-
-
 #include <StaticThreadController.h>
 #include <Thread.h>
 #include <ThreadController.h>
@@ -18,8 +14,7 @@
 #include "src/SDCardManager/SDCardManager.h"
 #include "src/LogicExecutor/LogicExecutor.h"
 #include "src/ClockProvider/ClockProvider.h"
-Thread GNDHumiditySensorTH;
-Thread DHTSensorReadTH;
+
 Thread WiFiConnectorTH;
 Thread keepAliveThread;
 Thread logicExecutorTH;
@@ -41,16 +36,6 @@ LogicExecutor * logicExec;
 ClockProvider *clockProvider;
 
 
-void gnd_humidity_sensor_read_handler(void){
-
-  //logger
-  logger->trace("GND HUMIDITY READ::\r\n");
-}
-void dht_sensor_read_handler(void){
-
-  //logger
-  logger->trace("DHT SENSOR READ::\r\n");
-}
 void keep_alive_handler(void){
   outMod->tick();
 }
@@ -98,17 +83,8 @@ void setup() {
 
   logicExec = new LogicExecutor();
   logger->notice("logic executor started\r\n");
+
   //threading configuration
-  GNDHumiditySensorTH.onRun(gnd_humidity_sensor_read_handler);
-  GNDHumiditySensorTH.setInterval(1000);
-  GNDHumiditySensorTH.enabled = false;
-  controller.add(&GNDHumiditySensorTH);
-  
-  
-  DHTSensorReadTH.onRun(dht_sensor_read_handler);
-  DHTSensorReadTH.enabled = false;
-  DHTSensorReadTH.setInterval(1000);
-  controller.add(&DHTSensorReadTH);
 
   WiFiConnectorTH.onRun(wifi_connect);
   WiFiConnectorTH.enabled=true;
@@ -146,16 +122,5 @@ void loop() {
   controller.run();
   cmdParser.tick();
   server->handleClient();
-  // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  // delay(1000);                       // wait for a second
-  // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  // delay(1000);                       // wait for a second
 
 }
-//file with libraries
-// ArduinoThread
-// ArduinoJSON
-// AduinoLog
-// ESP_EEPROM
-// CmdParser
-// https://www.hackster.io/brian-lough/3-simple-ways-of-programming-an-esp8266-12x-module-c514ee
