@@ -18,11 +18,12 @@ class OutputModule{
         void ledOff();
         void ledOn();
         void ledToggle();
-        void pumpOn();
+        void pumpOn(int reason = -2);
+        int getOnReason();
         void pumpOff();
         int getLeftTimeInSec();
         int pumpStatus();
-        void pumpOnForTimeSec(unsigned long duration);
+        void pumpOnForTimeSec(unsigned long duration, int reason = -2);
         void ledSetColor(uint8_t r, uint8_t g, uint8_t b);
         void ledSetR(uint8_t v);
         void ledSetG(uint8_t v);
@@ -40,6 +41,7 @@ class OutputModule{
         DHT dht;
         bool ledOnState;
         unsigned long pumpTimeOn = 0;
+        unsigned long pumpOnReason = -1;
         unsigned long wateringTime = 0;
         bool dark_mode = false;
         bool keepAliveBlinkState = true;

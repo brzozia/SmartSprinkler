@@ -141,6 +141,7 @@ WeatherAPI::rainData WeatherAPI::getTodaysRainInfo(){
             } 
         }
     }
+    rainData.rainMaxProbability *= 100.0;
     return rainData;
 }
 

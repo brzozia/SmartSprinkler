@@ -3,3 +3,4 @@ build/
 src/credentials.h
 credentials.h
 website/sprinkler/dist/
+dist/

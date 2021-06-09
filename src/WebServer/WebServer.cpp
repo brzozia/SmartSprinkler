@@ -30,10 +30,6 @@ void WebServer::handleHomePage(){
     server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
     size_t fsizeSent = server.streamFile(dataFile, "text/html");
     dataFile.close();
-
-
-    //turn on sprinkler if was turned off
-    //disable buton (in browser)
 }
 
 void WebServer::handleStartWatering(){
@@ -41,6 +37,7 @@ void WebServer::handleStartWatering(){
     String durationStr = server.arg("duration"); // in minnutes
     if(durationStr == ""){
         server.send(400, "application/json", "{\"error\": \"wrong request parameters\"}");
+        return;
     }
     duration = durationStr.toInt();
     outMod->pumpOnForTimeSec(duration);
@@ -99,14 +96,19 @@ void WebServer::handleGetSensors()
     sensor["value"] = weatherAPI->getMaxTemperature();
     sensor["unit"] = "C";
 
+    sensor = jsonDoc.createNestedObject();    
+    sensor["name"] = "system_time";
+    sensor["value"] = clockProvider->geTime();
+    sensor["unit"] = "ms";
+    
     WeatherAPI::rainData raindData = weatherAPI->getTodaysRainInfo();
     sensor = jsonDoc.createNestedObject();    
     sensor["name"] = "rain_max_prop24";
     sensor["value"] = raindData.rainMaxProbability;
-    sensor["unit"] = "";
+    sensor["unit"] = "%";
 
-    char buffer[512];
-    serializeJson(jsonDoc, buffer, 512);
+    char buffer[1024];
+    serializeJson(jsonDoc, buffer, 1024);
     server.send(200, "application/json", buffer);
 
 }
@@ -114,7 +116,7 @@ void WebServer::handleGetSensors()
 void WebServer::handleGetStatus() 
 {
     char message[64];
-    sprintf(message, "{\"status\": %d, \"leftTimeSec\": %d}", outMod->pumpStatus(), outMod->getLeftTimeInSec());
+    sprintf(message, "{\"status\": %d, \"leftTimeSec\": %d, reason: %d}", outMod->pumpStatus(), outMod->getLeftTimeInSec(), outMod->getOnReason());
     server.send(200, "application/json", message);
 }
 

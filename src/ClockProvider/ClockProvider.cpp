@@ -11,6 +11,11 @@ void ClockProvider::ntpSynchronize()
     setTime(timeClient.getEpochTime());
 }
 
+unsigned long ClockProvider::geTime() 
+{
+    return now();
+}
+
 uint8_t ClockProvider::getHours() 
 {
     time_t t = now();

@@ -5,6 +5,8 @@
 #include <ArduinoJson.h>
 #include "../SDCardManager/SDCardManager.h"
 #include "../OutputModule/OutputModule.h"
+#include "../ClockProvider/ClockProvider.h"
+#include "../WeatherAPI/WeatherAPI.h"
 #include <Arduino.h>
 
 //ELEMENT TYPES
@@ -16,7 +18,11 @@
 #define AIR_HUMIDITY 1
 #define SOIL_HUMIDITY 2
 #define AIR_TEMPERATURE 3
-#define TIME 4
+#define TIME_HOURS 4
+#define TIME_MINUTES 5
+#define MAX_HUMIDITY_24 6
+#define MAX_TEMPERATURE_24 7
+#define RAIN_MAX_PROP_24 8
 
 //CONDITION TYPES
 #define LOWER 1
@@ -36,8 +42,9 @@
 
 class LogicExecutor{
     typedef struct strategy_result{
-        bool status;
-        int duration_seconds; // in seconds
+        bool status = false;
+        int duration_seconds = 0; // in seconds
+        int strategy_id = -1;
     } strategy_result_t;
 
 

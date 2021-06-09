@@ -134,6 +134,7 @@ File LogicExecutor::getStrategyFile(String &name)
 
 void LogicExecutor::tick() 
 {
+    strategy_result_t tick_result;
 
     for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
         if(strategies[i].name[0] != '\0' && strategies[i].enabled == true){
@@ -145,12 +146,19 @@ void LogicExecutor::tick()
                 File file = sdCard->openFile(buff);
                 file.read((uint8_t *) buff, STRATEGY_FILE_SIZE);
                 strategy_result_t result = checkStrategy(buff);
+                result.strategy_id = i;
+                if(result.status){
+                    if(result.duration_seconds > tick_result.duration_seconds){
+                        tick_result = result;
+                    }
+                }
                 logger->notice("status: %T \r\n", result.status);
                 logger->notice("duration: %d \r\n", result.duration_seconds);
-                if(result.status) outMod->pumpOnForTimeSec(result.duration_seconds);
             }
         }
     }
+    if(tick_result.status) outMod->pumpOnForTimeSec(tick_result.duration_seconds, tick_result.strategy_id);
+
 }
 
 LogicExecutor::strategy_result_t LogicExecutor::checkStrategy(const char * strategy) 
@@ -220,8 +228,19 @@ float LogicExecutor::getSensorValue(byte v)
         return outMod->readSoilHumidity();
     }else if(v == AIR_TEMPERATURE){
         return outMod->readAirTemp();
-    }else if(v == TIME){
+    }else if(v == TIME_HOURS){
+        return clockProvider->getHours();
+    }else if(v == TIME_MINUTES){
+        return clockProvider->getHours();
+    }else if(v == MAX_HUMIDITY_24){
+        return weatherAPI->getMaxHumidity();
+    }else if(v == MAX_TEMPERATURE_24){
+        return weatherAPI->getMaxTemperature();
+    }else if(v == RAIN_MAX_PROP_24){
+        WeatherAPI::rainData raindData = weatherAPI->getTodaysRainInfo();
+        return raindData.rainMaxProbability;
     }
+    logger->error("parsing strategy; sensor %d does not exist", v);
     return 0.0;
 }
 

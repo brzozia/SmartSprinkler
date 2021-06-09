@@ -40,10 +40,16 @@ void OutputModule::ledToggle()
     else ledOn();
 }
 
-void OutputModule::pumpOn() 
+void OutputModule::pumpOn(int reason) 
 {
     pumpTimeOn = millis();
+    pumpOnReason = reason;
     digitalWrite(PUMP_PIN, LOW);
+}
+
+int OutputModule::getOnReason() 
+{
+    return pumpOnReason;
 }
 
 void OutputModule::pumpOff() 
@@ -65,10 +71,11 @@ int OutputModule::pumpStatus()
     return !digitalRead(PUMP_PIN);
 }
 
-void OutputModule::pumpOnForTimeSec(unsigned long duration) 
+void OutputModule::pumpOnForTimeSec(unsigned long duration, int reason) 
 {
+
     wateringTime = duration*1000;
-    pumpOn();
+    pumpOn(reason);
 }
 
 void OutputModule::ledSetColor(uint8_t r, uint8_t g, uint8_t b) 
