@@ -49,18 +49,24 @@ bool LogicExecutor::addStrategy(const String &name, const String &strategy, int 
             // TODO handle max strateges number exceeded;
         }
     }
+    if(idx == -1){
+        return false;
+    } 
     File strategyFile = sdCard->openFile(("strategies/"+name+".json").c_str(), sdfat::O_WRITE | sdfat::O_CREAT);
     strategyFile.print(strategy);
     strncpy(strategies[idx].name, name.c_str(), 16);
     strategies[idx].enabled = enabled;
     strategies[idx].interval_minutes = interval;
     persistConfiguration();
-
+    return true;
 }
 
 bool LogicExecutor::updateStrategyBody(const String &name, const String &strategy) 
 {
     int idx = _find_strategy(name.c_str());
+    if(idx == -1){
+        return false;
+    } 
     File strategyFile = sdCard->openFile(("strategies/"+name+".json").c_str(), sdfat::O_WRITE | sdfat::O_CREAT);
     strategyFile.print(strategy);
     strategyFile.close();
@@ -70,15 +76,23 @@ bool LogicExecutor::updateStrategyBody(const String &name, const String &strateg
 bool LogicExecutor::updateStrategyState(const String &name, int enabled) 
 {
     int idx = _find_strategy(name.c_str());
+    if(idx == -1){
+        return false;
+    } 
     strategies[idx].enabled = enabled;
     persistConfiguration();
+    return true;
 }
 
 bool LogicExecutor::updateStrategyInterval(const String &name, int interval) 
 {
     int idx = _find_strategy(name.c_str());
+    if(idx == -1){
+        return false;
+    }    
     strategies[idx].interval_minutes = interval;
-    persistConfiguration();    
+    persistConfiguration();
+    return true;    
 }
 
 void LogicExecutor::persistConfiguration() 
@@ -108,16 +122,23 @@ int LogicExecutor::_find_strategy(const char * c_name){
             return i;
             // TODO handle no strategy;
         }
-    } 
+    }
+    logger->error("no strategy with name %s", c_name);
+    return -1;
 }
 bool LogicExecutor::deleteStrategy(String &name) 
 {
     const char * c_name = name.c_str();
     int idx = _find_strategy(c_name);
+    if(idx == -1){
+        return false;
+    }
+
     strategies[idx].name[0] = '\0';
     strategies[idx].enabled = false;
     sdCard->deleteFile(("strategies/"+name+".json").c_str());
     persistConfiguration();
+    return true;
 }
 
 File LogicExecutor::getStrategyConfigFile() 

@@ -121,33 +121,58 @@ void WebServer::handleGetStatus()
 }
 
 void WebServer::handleAddStrategy(){
+    if(!server.hasArg("body") || !server.hasArg("enabled") || !server.hasArg("interval")){
+        server.send(400, "application/json", "{\"error\": \"wrong request parameters\"}");
+        return;
+    }
     String name = server.arg("name");
+    if(name.length() == 0){
+        server.send(400, "application/json", "{\"error\": \"no strategy name\"}");
+        return;        
+    }
     int enabled = server.arg("enabled").toInt();
     int interval = server.arg("interval").toInt();
-    logicExec->addStrategy(name, server.arg("body"), enabled, interval);
+    bool op_success = logicExec->addStrategy(name, server.arg("body"), enabled, interval);
+    if(!op_success){
+        server.send(500, "application/json", "{\"error\": \"couldnt add strategy\"}");
+        return;          
+    }
     server.send(200, "text/json", "{\"name\":\""+name+"\"}");
 }
 
 void WebServer::handleUpdateStrategy() 
 {
     String name = server.uri().substring(10);
+    bool op_success = false;
     if(server.hasArg("body")){
-        logicExec->updateStrategyBody(name, server.arg("body"));
+        op_success = logicExec->updateStrategyBody(name, server.arg("body"));
     }
     if(server.hasArg("enabled")){
-        logicExec->updateStrategyState(name, server.arg("enabled").toInt());
+        op_success = logicExec->updateStrategyState(name, server.arg("enabled").toInt());
     }
     if(server.hasArg("interval")){
-        logicExec->updateStrategyInterval(name, server.arg("interval").toInt());
+        op_success = logicExec->updateStrategyInterval(name, server.arg("interval").toInt());
     }
-    server.send(200, "application/json", "{\"name\":\""+name+"\"}");
+    if(op_success){
+        server.send(200, "application/json", "{\"name\":\""+name+"\"}");
+    }else{
+        server.send(500, "application/json", "{\"error\": \"couldnt update strategy\"}");
+    }
 }
 
 void WebServer::handleDeleteStrategy() 
 {
     String uri = server.uri().substring(10);
-    logicExec->deleteStrategy(uri);
-    server.send(200, "application/json", "{\"name\":\""+uri+"\"}");
+    if(uri.length() == 0){
+        server.send(400, "application/json", "{\"error\": \"no strategy name\"}");
+        return;        
+    }    
+    bool op_success = logicExec->deleteStrategy(uri);
+    if(op_success){
+        server.send(200, "application/json", "{\"name\":\""+uri+"\"}");
+    }else{
+        server.send(500, "application/json", "{\"error\": \"couldnt delete strategy\"}");
+    }
 }
 
 
@@ -155,6 +180,10 @@ void WebServer::handleGetStrategy()
 {
     String uri = server.uri().substring(10);
     File dataFile = logicExec->getStrategyFile(uri);
+    if(!dataFile.isFile()){
+        server.send(400, "application/json", "{\"error\": \"no such strategy file\"}");
+        return;        
+    }
     int fsizeDisk = dataFile.size();
     logger->notice("fsizeDisk: %d", fsizeDisk);
     // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
