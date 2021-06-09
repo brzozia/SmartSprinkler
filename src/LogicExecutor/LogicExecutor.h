@@ -68,7 +68,7 @@ class LogicExecutor{
         bool updateStrategyBody(const String &name, const String &strategy);
         bool updateStrategyState(const String &name, int enabled);
         bool updateStrategyInterval(const String &name, int interval);
-        void persistConfiguration();
+        bool persistConfiguration();
         bool deleteStrategy(String &name);
         File getStrategyConfigFile();
         File getStrategyFile(String &name);

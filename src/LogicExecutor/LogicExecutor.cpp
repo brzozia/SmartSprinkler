@@ -15,12 +15,16 @@ LogicExecutor::LogicExecutor(void)
 void LogicExecutor::loadConfiguration() 
 {
     File strategies_config = sdCard->openFile("strategies/strategies_config.json");
+    if(!strategies_config.isFile()){
+        logger->error("load strategies config failed\r\n");
+        return;
+    }
     uint8_t buffer[STRATEGIES_FILE_BUFFER_SIZE];
     strategies_config.read(buffer, STRATEGIES_FILE_BUFFER_SIZE);
     jsonDoc.clear();
     DeserializationError err=deserializeJson(jsonDoc, buffer);
     if(err) {
-        logger->error("deserializeJson() failed with code %s \r\n", err.c_str());
+        logger->error("deserializeJson() of strategy configs failed with code %s \r\n", err.c_str());
     }   
     JsonArray arr = jsonDoc.as<JsonArray>();
     uint8_t idx = 0;
@@ -30,10 +34,10 @@ void LogicExecutor::loadConfiguration()
         strncpy(strategies[idx].name, element["name"], 16);
 
 
-        logger->notice("loaded strategy %s #%d \r\n", strategies[idx].name, strategies[idx].interval_minutes);
+        logger->notice("loaded strategy %s interval%d \r\n", strategies[idx].name, strategies[idx].interval_minutes);
         idx++;
         if(idx == MAX_STRATEGIES_NUMBER){
-            logger->error("too many strategies in file");
+            logger->error("too many strategies in file\r\n");
             break;
         }
     }
@@ -50,15 +54,20 @@ bool LogicExecutor::addStrategy(const String &name, const String &strategy, int 
         }
     }
     if(idx == -1){
+        logger->error("add strategy failed\r\n");
         return false;
     } 
     File strategyFile = sdCard->openFile(("strategies/"+name+".json").c_str(), sdfat::O_WRITE | sdfat::O_CREAT);
+    if(!strategyFile.isFile()){
+        logger->error("add strategy failed\r\n");
+        return false;
+    }
     strategyFile.print(strategy);
     strncpy(strategies[idx].name, name.c_str(), 16);
     strategies[idx].enabled = enabled;
     strategies[idx].interval_minutes = interval;
-    persistConfiguration();
-    return true;
+    
+    return persistConfiguration();
 }
 
 bool LogicExecutor::updateStrategyBody(const String &name, const String &strategy) 
@@ -68,6 +77,10 @@ bool LogicExecutor::updateStrategyBody(const String &name, const String &strateg
         return false;
     } 
     File strategyFile = sdCard->openFile(("strategies/"+name+".json").c_str(), sdfat::O_WRITE | sdfat::O_CREAT);
+    if(!strategyFile.isFile()){
+        logger->error("update strategy failed\r\n");
+        return false;
+    }
     strategyFile.print(strategy);
     strategyFile.close();
     return true;
@@ -77,6 +90,7 @@ bool LogicExecutor::updateStrategyState(const String &name, int enabled)
 {
     int idx = _find_strategy(name.c_str());
     if(idx == -1){
+        logger->error("update strategy failed\r\n");
         return false;
     } 
     strategies[idx].enabled = enabled;
@@ -88,6 +102,7 @@ bool LogicExecutor::updateStrategyInterval(const String &name, int interval)
 {
     int idx = _find_strategy(name.c_str());
     if(idx == -1){
+        logger->error("update strategy failed\r\n");
         return false;
     }    
     strategies[idx].interval_minutes = interval;
@@ -95,9 +110,13 @@ bool LogicExecutor::updateStrategyInterval(const String &name, int interval)
     return true;    
 }
 
-void LogicExecutor::persistConfiguration() 
+bool LogicExecutor::persistConfiguration() 
 {
     File strategies_config = sdCard->openFile("strategies/strategies_config.json", sdfat::O_WRITE);
+    if(!strategies_config.isFile()){
+        logger->error("persistConfig failed; couldnt open file\r\n");
+        return false;
+    }
     char buffer[STRATEGIES_FILE_BUFFER_SIZE];
     jsonDoc.clear();
     for(int i = 0; i < MAX_STRATEGIES_NUMBER; i++){
@@ -113,6 +132,7 @@ void LogicExecutor::persistConfiguration()
     strategies_config.write(buffer, serialized_size);
     if(serialized_size == 0) {
         logger->error("serializeJson() failed with size %s \r\n", serialized_size);
+        return false;
     }   
     strategies_config.close();
 }
@@ -123,7 +143,7 @@ int LogicExecutor::_find_strategy(const char * c_name){
             // TODO handle no strategy;
         }
     }
-    logger->error("no strategy with name %s", c_name);
+    logger->error("no strategy with name %s\r\n", c_name);
     return -1;
 }
 bool LogicExecutor::deleteStrategy(String &name) 
@@ -178,7 +198,13 @@ void LogicExecutor::tick()
             }
         }
     }
-    if(tick_result.status) outMod->pumpOnForTimeSec(tick_result.duration_seconds, tick_result.strategy_id);
+    if(tick_result.status){
+        if(outMod->pumpStatus() && outMod->getOnReason() == -2){
+            logger->trace("pump already on by user; skipping");
+        }else{
+            outMod->pumpOnForTimeSec(tick_result.duration_seconds, tick_result.strategy_id);
+        }
+    }
 
 }
 
@@ -227,11 +253,11 @@ LogicExecutor::strategy_result_t LogicExecutor::checkStrategy(const char * strat
         }else if(element["T"] == RESULT){
             // INVOKE ACTIONS
             if(strategy_state){
-                Serial.println("start watering\r\n");
+                logger->notice("start watering\r\n");
                 result.status = true;
                 result.duration_seconds = element["V"];
             }else{
-                Serial.println("off watering\r\n");
+                logger->notice("off watering\r\n");
                 result.status = false;
             }
         }
@@ -261,7 +287,7 @@ float LogicExecutor::getSensorValue(byte v)
         WeatherAPI::rainData raindData = weatherAPI->getTodaysRainInfo();
         return raindData.rainMaxProbability;
     }
-    logger->error("parsing strategy; sensor %d does not exist", v);
+    logger->error("parsing strategy; sensor %d does not exist\r\n", v);
     return 0.0;
 }
 

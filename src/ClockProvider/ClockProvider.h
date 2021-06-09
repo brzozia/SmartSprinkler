@@ -3,6 +3,8 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 #include <TimeLib.h>
+#include "../GeneralLogger/GeneralLogger.h"
+#include "../globals.h"
 
 class ClockProvider{
     private:

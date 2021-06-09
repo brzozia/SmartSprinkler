@@ -41,7 +41,7 @@ class OutputModule{
         DHT dht;
         bool ledOnState;
         unsigned long pumpTimeOn = 0;
-        unsigned long pumpOnReason = -1;
+        int pumpOnReason = -1;
         unsigned long wateringTime = 0;
         bool dark_mode = false;
         bool keepAliveBlinkState = true;

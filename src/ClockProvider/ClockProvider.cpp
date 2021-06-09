@@ -7,6 +7,7 @@ ClockProvider::ClockProvider():timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSec
 
 void ClockProvider::ntpSynchronize() 
 {
+    logger->notice("time synchronized with ntp\r\n");
     timeClient.update();
     setTime(timeClient.getEpochTime());
 }

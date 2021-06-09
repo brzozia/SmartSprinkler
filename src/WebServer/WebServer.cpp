@@ -185,7 +185,6 @@ void WebServer::handleGetStrategy()
         return;        
     }
     int fsizeDisk = dataFile.size();
-    logger->notice("fsizeDisk: %d", fsizeDisk);
     // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
     size_t fsizeSent = server.streamFile(dataFile, "text/html");
     dataFile.close();        
@@ -195,7 +194,6 @@ void WebServer::handleListStrategies()
 {
     File dataFile = logicExec->getStrategyConfigFile();
     int fsizeDisk = dataFile.size();
-    logger->notice("fsizeDisk: %d", fsizeDisk);
     // server.sendHeader("Content-Length", (String)(fsizeDisk));
     // server.sendHeader("Cache-Control", "max-age=2628000, public"); // cache for 30 days
     size_t fsizeSent = server.streamFile(dataFile, "application/json");

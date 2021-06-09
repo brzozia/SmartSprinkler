@@ -73,7 +73,6 @@ int OutputModule::pumpStatus()
 
 void OutputModule::pumpOnForTimeSec(unsigned long duration, int reason) 
 {
-
     wateringTime = duration*1000;
     pumpOn(reason);
 }

@@ -17,7 +17,7 @@ bool SDCardManager::connectSDCard(){
   logger->notice("done!\n\r");
 
     if(status==false){
-        logger->error("SD failed to begin");
+        logger->error("SD failed to begin\r\n");
     }
     return status;
 }
