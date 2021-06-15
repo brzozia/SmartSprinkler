@@ -2,6 +2,9 @@
 
 ### Automatyczny system podlewający. 
  <br>
+Autorzy:
+ - [Karol Hamielec](https://github.com/lewelyn7)
+ - [Natalia Brzozowska](https://github.com/brzozia) 
 
 ## Cel
 
